@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visor Water Oriented Living Lab</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Estilos personalizados - ORDEN IMPORTANTE -->
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/desktop.css" />
+  <link rel="stylesheet" href="css/mobile.css" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/img/cropped-favicon-192x192.png" type="image/x-icon" />
+</head>
+
+<body>
+  <!-- Navbar Superior - visible en todas las pantallas -->
+  <nav class="navbar navbar-dark bg-dark-blue fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-start">
+        <img src="assets/img/Logo-AVR-Blanco.png" alt="OEC Logo" />
+        <span class="navbar-brand">Visor Territorial "Water Oriented Living Lab"</span>
+      </div>
+      <div class="buttons-container">
+        <button id="toggleLeftSidebarBtn" class="btn btn-outline-light me-2" type="button" aria-expanded="false"
+          title="Mostrar/Ocultar capas (izquierda)">
+          <i class="fas fa-layer-group"></i>
+        </button>
+        <button id="toggleRightSidebarBtn" class="btn btn-outline-light me-2" type="button" aria-expanded="false"
+          title="Leyenda">
+          <i class="fas fa-map"></i>
+        </button>
+        <button id="toggleChatSidebarBtn" class="btn btn-outline-light me-2" type="button" aria-expanded="false"
+          title="Chat NotebookLM">
+          <i class="fas fa-comment-dots"></i>
+        </button>
+        <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#welcomeModal">
+          <i class="fas fa-info-circle"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Aside izquierdo fijo (comienza debajo del navbar) -->
+  <aside id="leftSidebar" class="left-sidebar" aria-hidden="true">
+    <div class="left-sidebar-header px-0">
+      <button id="leftSidebarTopBtn" class="left-top-btn d-flex align-items-center justify-content-center" type="button"
+        title="Capas Temáticas">
+        <i class="fas fa-layer-group"></i>
+        <span class="ms-2">Capas Temáticas</span>
+      </button>
+
+      <button id="closeLeftSidebarBtn" class="btn btn-sm" aria-label="Cerrar panel izquierdo" title="Cerrar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="left-sidebar-body p-3">
+      <div class="layers-container" id="sidebar-layers">
+        <ul id="sidebar-layers-master" class="list-unstyled mb-0"></ul>
+      </div>
+
+      <!-- Contenedor mobile para capas temáticas -->
+      <div id="sidebar-layers-mobile" class="layers-container d-none">
+        <!-- Las capas se moverán aquí en mobile mediante JavaScript -->
+      </div>
+
+      <button class="btn btn-secondary w-100 mb-3 mt-2" type="button">
+        <i class="fas fa-globe"></i> Capas Base
+      </button>
+      <div class="base-layers-container" id="sidebar-base-container">
+        <ul id="sidebar-base-layers" class="list-unstyled mb-0"></ul>
+      </div>
+
+      <!-- Contenedor mobile para capas base -->
+      <div id="sidebar-base-mobile-container" class="base-layers-container d-none">
+        <button class="btn btn-secondary w-100 mb-3 mt-2" type="button">
+          <i class="fas fa-globe"></i> Capas Base
+        </button>
+        <ul id="sidebar-base-layers-mobile" class="list-unstyled mb-0"></ul>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Aside derecho fijo para Leyenda (comienza debajo del navbar) -->
+  <aside id="rightSidebar" class="right-sidebar" aria-hidden="true">
+    <div class="right-sidebar-header px-0">
+      <button id="rightSidebarTopBtn" class="right-top-btn d-flex align-items-center justify-content-center"
+        type="button" title="Leyenda">
+        <i class="fas fa-map"></i>
+        <span class="ms-2">Leyenda</span>
+      </button>
+
+      <button id="closeRightSidebarBtn" class="btn btn-sm" aria-label="Cerrar panel derecho" title="Cerrar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="right-sidebar-body p-3">
+      <!-- Contenedor de leyenda - usado tanto en desktop como mobile -->
+      <div id="sidebar-legend"></div>
+    </div>
+  </aside>
+
+  <!-- Aside derecho fijo para Chat NotebookLM -->
+  <aside id="chatSidebar" class="right-sidebar" aria-hidden="true">
+    <div class="right-sidebar-header px-0">
+      <button id="chatSidebarTopBtn" class="right-top-btn d-flex align-items-center justify-content-center"
+        type="button" title="Chat NotebookLM">
+        <i class="fas fa-comment-dots"></i>
+        <span class="ms-2">Chat NotebookLM</span>
+      </button>
+
+      <button id="closeChatSidebarBtn" class="btn btn-sm" aria-label="Cerrar panel chat" title="Cerrar">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="right-sidebar-body ai-chat-container">
+      <div id="ai-chat-messages" class="ai-chat-messages p-3">
+        <div class="ai-message assistant">
+          ¡Hola! Soy tu asistente de IA del Visor Territorial. ¿En qué puedo ayudarte hoy?
+        </div>
+      </div>
+      <div class="ai-chat-input-container p-3 border-top">
+        <div class="input-group">
+          <input type="text" id="ai-chat-input" class="form-control" placeholder="Escribe tu consulta aquí..."
+            aria-label="Consulta de IA">
+          <button class="btn btn-primary" type="button" id="ai-chat-send">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sidebar Izquierdo -->
+  <div class="container-fluid">
+    <div class="row g-0">
+      <!-- Mapa -->
+      <div class="col-12 p-0">
+        <div id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de bienvenida -->
+  <div class="modal fade" id="welcomeModal">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Bienvenido/a</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Bienvenido/a al visor territorial del
+            <b>"Water Oriented Living Lab, WoLL Región de Atacama"</b>. Este
+            espacio está diseñado para proporcionarte una visión territorial
+            de la Region de Atacama en diversas dimensiones geográficas.
+          </p>
+          <p>
+            Utiliza el menú de capas en la barra superior, para explorar las
+            diferentes dimensiones y su respectiva informacion. Además, puedes
+            visualizar la leyenda de las capas en el panel derecho.
+          </p>
+          <p>
+            Producción Cartográfica:
+            <a href="mailto:diegovelasquezf@gmail.com" target="_blank">Consultora Andes Value Research</a>, para la
+            Corporación de Fomento en marco del proyecto
+            "Instalación de un Water Oriented Living Lab (WoLL) para la
+            captación, tratamiento y gestión hídrica en territorios con
+            condición de aridez en la Región de Atacama."WoLL Región de
+            Atacama" Código 24BP-273025".
+          </p>
+          <p>
+            La información contenida en el Visor es de caracter REFERENCIAL,
+            por lo tanto puede presentar inconsistencias con el objeto que se
+            esta representando. Las capas de información contenidas en el
+            Visor, provienen de distintas fuentes de proyección
+            geográfica,realizándose una transformación al datum WGS 1984, por
+            lo que es responsabilidad del usuario verificar su exactitud y
+            vigencia.
+          </p>
+          <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 mt-3 logo-container">
+            <a href="https://www.corfo.cl/sites/cpp/homecorfo#" target="_blank"><img src="assets/img/logo_corfo.png"
+                alt="corfo" class="img-fluid modal-logo" /></a>
+            <a href="https://goreatacama.cl/" target="_blank"><img src="assets/img/gore-atacama.png" alt="goreatacama"
+                class="img-fluid modal-logo" /></a>
+            <a href="http://andesvalue.com/" target="_blank"><img src="assets/img/Logo Andes.jpg" alt="andesvalue"
+                class="img-fluid modal-logo" /></a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Turf.js/6.5.0/turf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Mostrar modal de bienvenida solo la primera vez
+      const welcomeModal = document.getElementById("welcomeModal");
+      if (welcomeModal) {
+        const hasSeenWelcome = localStorage.getItem('hasSeenWelcomeModal');
+        if (!hasSeenWelcome) {
+          new bootstrap.Modal(welcomeModal).show();
+          localStorage.setItem('hasSeenWelcomeModal', 'true');
+        }
+      }
+
+      const leftSidebar = document.getElementById("leftSidebar");
+      const rightSidebar = document.getElementById("rightSidebar");
+      const chatSidebar = document.getElementById("chatSidebar");
+      const toggleLeftBtn = document.getElementById("toggleLeftSidebarBtn");
+      const toggleRightBtn = document.getElementById("toggleRightSidebarBtn");
+      const toggleChatBtn = document.getElementById("toggleChatSidebarBtn");
+      const closeLeftBtn = document.getElementById("closeLeftSidebarBtn");
+      const closeRightBtn = document.getElementById("closeRightSidebarBtn");
+      const closeChatBtn = document.getElementById("closeChatSidebarBtn");
+      const chatInput = document.getElementById("ai-chat-input");
+      const chatSendBtn = document.getElementById("ai-chat-send");
+      const chatMessages = document.getElementById("ai-chat-messages");
+      const navbar = document.querySelector(".navbar.fixed-top");
+
+      function adjustSidebarsTop() {
+        const navHeight = navbar ? navbar.getBoundingClientRect().height : 60;
+
+        if (leftSidebar) {
+          leftSidebar.style.top = navHeight + "px";
+          leftSidebar.style.height = `calc(100vh - ${navHeight}px)`;
+        }
+        if (rightSidebar) {
+          rightSidebar.style.top = navHeight + "px";
+          rightSidebar.style.height = `calc(100vh - ${navHeight}px)`;
+        }
+        if (chatSidebar) {
+          chatSidebar.style.top = navHeight + "px";
+          chatSidebar.style.height = `calc(100vh - ${navHeight}px)`;
+        }
+      }
+      adjustSidebarsTop();
+
+      window.addEventListener("resize", adjustSidebarsTop);
+      window.addEventListener("orientationchange", () => {
+        setTimeout(adjustSidebarsTop, 100);
+      });
+
+      function openLeftSidebar() {
+        leftSidebar.classList.add("open");
+        leftSidebar.setAttribute("aria-hidden", "false");
+        toggleLeftBtn.setAttribute("aria-expanded", "true");
+      }
+      function closeLeftSidebar() {
+        leftSidebar.classList.remove("open");
+        leftSidebar.setAttribute("aria-hidden", "true");
+        toggleLeftBtn.setAttribute("aria-expanded", "false");
+      }
+
+      toggleLeftBtn.addEventListener("click", () => {
+        if (leftSidebar.classList.contains("open")) closeLeftSidebar();
+        else openLeftSidebar();
+      });
+      closeLeftBtn.addEventListener("click", closeLeftSidebar);
+
+      function openRightSidebar() {
+        closeChatSidebar();
+        rightSidebar.classList.add("open");
+        rightSidebar.setAttribute("aria-hidden", "false");
+        toggleRightBtn.setAttribute("aria-expanded", "true");
+      }
+      function closeRightSidebar() {
+        rightSidebar.classList.remove("open");
+        rightSidebar.setAttribute("aria-hidden", "true");
+        toggleRightBtn.setAttribute("aria-expanded", "false");
+      }
+
+      toggleRightBtn.addEventListener("click", () => {
+        if (rightSidebar.classList.contains("open")) closeRightSidebar();
+        else openRightSidebar();
+      });
+      closeRightBtn.addEventListener("click", closeRightSidebar);
+
+      function openChatSidebar() {
+        closeRightSidebar();
+        chatSidebar.classList.add("open");
+        chatSidebar.setAttribute("aria-hidden", "false");
+        toggleChatBtn.setAttribute("aria-expanded", "true");
+      }
+      function closeChatSidebar() {
+        chatSidebar.classList.remove("open");
+        chatSidebar.setAttribute("aria-hidden", "true");
+        toggleChatBtn.setAttribute("aria-expanded", "false");
+      }
+
+      toggleChatBtn.addEventListener("click", () => {
+        if (chatSidebar.classList.contains("open")) closeChatSidebar();
+        else openChatSidebar();
+      });
+      closeChatBtn.addEventListener("click", closeChatSidebar);
+
+      function addMessageToChat(text, sender) {
+        const msgDiv = document.createElement("div");
+        msgDiv.classList.add("ai-message", sender);
+        msgDiv.textContent = text;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      function handleSendMessage() {
+        const text = chatInput.value.trim();
+        if (text) {
+          addMessageToChat(text, "user");
+          chatInput.value = "";
+
+          const typingMsg = document.createElement("div");
+          typingMsg.classList.add("ai-message", "assistant", "typing");
+          typingMsg.textContent = "...";
+          chatMessages.appendChild(typingMsg);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+
+          fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              messages: [
+                { role: 'system', content: 'Eres un asistente experto para el Visor Territorial Water Oriented Living Lab (WoLL). Ayudas a los usuarios a entender los datos de la Región de Atacama.' },
+                { role: 'user', content: text }
+              ]
+            })
+          })
+            .then(response => response.json())
+            .then(data => {
+              chatMessages.removeChild(typingMsg);
+
+              if (data.choices && data.choices[0]) {
+                addMessageToChat(data.choices[0].message.content, "assistant");
+              } else if (data.error) {
+                addMessageToChat("Error: " + data.error, "assistant");
+              }
+            })
+            .catch(error => {
+              chatMessages.removeChild(typingMsg);
+              console.error('Error:', error);
+              addMessageToChat("Lo siento, hubo un error al procesar tu solicitud.", "assistant");
+            });
+        }
+      }
+
+      chatSendBtn.addEventListener("click", handleSendMessage);
+      chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") handleSendMessage();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeLeftSidebar();
+          closeRightSidebar();
+          closeChatSidebar();
+        }
+      });
+
+      /* ===============================
+         GESTOR RESPONSIVE DE CONTENEDORES
+         Mueve EL DOM (no clona) entre los contenedores
+         según el ancho de ventana (breakpoint).
+         =============================== */
+
+      const BREAKPOINT = 769; // >=769px => desktop
+
+      // Contenedores desktop (aside izquierdo)
+      const desktopLayersContainer =
+        document.getElementById("sidebar-layers"); // div que contiene <ul>
+      const desktopBaseContainer = document.getElementById(
+        "sidebar-base-container"
+      ); // div que contiene <ul>
+      const desktopLayersUl = desktopLayersContainer
+        ? desktopLayersContainer.querySelector("ul")
+        : null;
+      const desktopBaseUl = document.getElementById("sidebar-base-layers"); // ul (tiene id)
+
+      // Contenedores mobile (también en aside izquierdo)
+      const mobileLayersDiv = document.getElementById(
+        "sidebar-layers-mobile"
+      ); // div
+      const mobileBaseMobileUl = document.getElementById(
+        "sidebar-base-layers-mobile"
+      ); // ul
+      const mobileBaseDiv = mobileBaseMobileUl
+        ? mobileBaseMobileUl.parentElement
+        : null;
+
+      function moveNodeToContainer(node, container) {
+        if (!node || !container) {
+          return;
+        }
+        if (container.contains(node)) return; // ya está ahí
+
+        // Eliminar placeholder ul distinto si existe dentro del contenedor destino
+        // para evitar duplicados visuales si la estructura fuera diferente
+        const placeholder = container.querySelector("ul");
+        if (placeholder && placeholder !== node) {
+          // Opcional: placeholder.remove(); 
+          // (Depende de si queremos reemplazar contenido o añadir. Aquí añadimos.)
+        }
+
+        // Mover el nodo al nuevo contenedor
+        // appendChild lo mueve automáticamente de su ubicación anterior
+        container.appendChild(node);
+      }
+
+      function adaptSidebarPlacement() {
+        const w = window.innerWidth;
+        if (w < BREAKPOINT) {
+          // Móvil: mover listas a contenedores mobile (dentro del mismo leftSidebar)
+          if (mobileLayersDiv && desktopLayersUl) {
+            moveNodeToContainer(desktopLayersUl, mobileLayersDiv);
+            // Mostrar contenedor mobile y ocultar desktop
+            mobileLayersDiv.classList.remove('d-none');
+            if (desktopLayersContainer) desktopLayersContainer.classList.add('d-none');
+          }
+          if (mobileBaseDiv && desktopBaseUl) {
+            moveNodeToContainer(desktopBaseUl, mobileBaseDiv);
+            // Mostrar contenedor mobile y ocultar desktop
+            const mobileBaseContainer = document.getElementById('sidebar-base-mobile-container');
+            if (mobileBaseContainer) mobileBaseContainer.classList.remove('d-none');
+            if (desktopBaseContainer) desktopBaseContainer.classList.add('d-none');
+          }
+        } else {
+          // Escritorio: mover listas a contenedores desktop
+          if (desktopLayersContainer && desktopLayersUl) {
+            moveNodeToContainer(desktopLayersUl, desktopLayersContainer);
+            // Mostrar contenedor desktop y ocultar mobile
+            desktopLayersContainer.classList.remove('d-none');
+            if (mobileLayersDiv) mobileLayersDiv.classList.add('d-none');
+          }
+          if (desktopBaseContainer && desktopBaseUl) {
+            moveNodeToContainer(desktopBaseUl, desktopBaseContainer);
+            // Mostrar contenedor desktop y ocultar mobile
+            desktopBaseContainer.classList.remove('d-none');
+            const mobileBaseContainer = document.getElementById('sidebar-base-mobile-container');
+            if (mobileBaseContainer) mobileBaseContainer.classList.add('d-none');
+          }
+        }
+      }
+
+      // Debounce simple para evitar llamadas excesivas en resize
+      let resizeTimer = null;
+      function onResizeAdapt() {
+        if (resizeTimer) clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          adaptSidebarPlacement();
+          adjustSidebarsTop(); // reajustar top si cambió layout
+        }, 120);
+      }
+
+      // Ejecutar al cargar y en cambios de tamaño/orientación
+      adaptSidebarPlacement();
+      window.addEventListener("resize", onResizeAdapt);
+      window.addEventListener("orientationchange", onResizeAdapt);
+
+      // Si el contenido de capas se genera dinámicamente después de la carga,
+      // exponer una función global para forzar reubicación:
+      window.moveLayersForCurrentViewport = adaptSidebarPlacement;
+    });
+  </script>
+</body>
+
+</html>

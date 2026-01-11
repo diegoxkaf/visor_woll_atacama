@@ -1,0 +1,201 @@
+/* ========================================
+   MOBILE.CSS - Estilos para pantallas ≤ 768px
+   ======================================== */
+
+@media (max-width: 768px) {
+  /* ===== BODY Y LAYOUT PRINCIPAL MOBILE ===== */
+  body {
+    padding-top: var(--navbar-height) !important;
+  }
+
+  /* Container principal que contiene el mapa */
+  body > .container-fluid {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    height: calc(100vh - var(--navbar-height)) !important;
+  }
+
+  /* Mapa alineado correctamente */
+  #map {
+    top: 0;
+    height: 100% !important;
+  }
+
+  /* ===== NAVBAR MOBILE ===== */
+  .navbar.fixed-top {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    padding-top: 0px;
+    z-index: 1030 !important;
+    height: var(--navbar-height) !important;
+  }
+
+  .navbar .container-fluid {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    gap: 0.75rem !important;
+    padding: 0 0.75rem !important;
+    height: var(--navbar-height) !important;
+  }
+
+  .navbar img {
+    height: 23px !important;
+  }
+
+  .navbar-start {
+    gap: 0.75rem !important;
+  }
+
+  .navbar .navbar-brand {
+    font-size: 0.75rem !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.15rem !important;
+  }
+
+  .navbar .btn {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .navbar .btn i {
+    font-size: 1rem !important;
+  }
+
+  .buttons-container {
+    min-width: 130px !important;
+    max-width: 150px !important;
+    gap: 0.3rem !important;
+  }
+
+  .navbar .buttons-container {
+    min-width: 130px !important;
+    gap: 0.3rem !important;
+  }
+
+  /* ===== SIDEBARS MOBILE ===== */
+  .left-sidebar,
+  .right-sidebar {
+    width: 85% !important;
+    max-width: 350px !important;
+    top: var(--navbar-height) !important;
+    height: calc(100vh - var(--navbar-height)) !important;
+    position: fixed !important;
+    z-index: 1025 !important;
+  }
+
+  /* Headers de sidebars en mobile */
+  .left-sidebar .left-sidebar-header,
+  .right-sidebar .right-sidebar-header {
+    height: 56px !important;
+    min-height: 56px !important;
+  }
+
+  .left-sidebar .left-top-btn,
+  .right-sidebar .right-top-btn {
+    font-size: 0.9rem !important;
+    padding-left: 1rem !important;
+  }
+
+  .left-sidebar .left-top-btn i,
+  .right-sidebar .right-top-btn i {
+    font-size: 1rem !important;
+  }
+
+  /* Botones de cerrar en mobile */
+  #closeLeftSidebarBtn,
+  #closeRightSidebarBtn {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Body de sidebars con scroll correcto */
+  .left-sidebar .left-sidebar-body,
+  .right-sidebar .right-sidebar-body {
+    max-height: calc(100vh - var(--navbar-height) - 56px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  /* ===== DIMENSIONES MOBILE ===== */
+  .dimension-group .fw-600 {
+    font-size: 0.92rem !important;
+  }
+
+  /* ===== LEYENDA MOBILE ===== */
+  #sidebar-legend {
+    max-height: calc(100vh - var(--navbar-height) - 150px) !important;
+  }
+
+  /* ===== POPUPS MOBILE ===== */
+  .custom-popup {
+    font-size: 11px !important;
+  }
+
+  .custom-popup .popup-title {
+    font-size: 12px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .custom-popup p {
+    font-size: 10px !important;
+    margin: 2px 0 !important;
+  }
+
+  .custom-popup p strong {
+    font-size: 10px !important;
+  }
+
+  .custom-popup a {
+    font-size: 10px !important;
+  }
+
+  .leaflet-popup-content {
+    margin: 6px 10px !important;
+    min-width: 150px !important;
+    max-width: 250px !important;
+  }
+}
+
+/* ===== PANTALLAS EXTRA PEQUEÑAS ===== */
+@media (max-width: 480px) {
+  .left-sidebar,
+  .right-sidebar {
+    width: 90% !important;
+    max-width: 320px !important;
+  }
+
+  .left-sidebar .left-sidebar-header,
+  .right-sidebar .right-sidebar-header {
+    height: 52px !important;
+    min-height: 52px !important;
+  }
+
+  .left-sidebar .left-top-btn,
+  .right-sidebar .right-top-btn {
+    font-size: 0.85rem !important;
+    padding-left: 0.9rem !important;
+  }
+
+  .navbar .navbar-brand {
+    font-size: 0.85rem !important;
+  }
+
+  .custom-popup {
+    font-size: 10px !important;
+  }
+
+  .custom-popup .popup-title {
+    font-size: 11px !important;
+  }
+
+  .custom-popup p {
+    font-size: 9px !important;
+  }
+}
