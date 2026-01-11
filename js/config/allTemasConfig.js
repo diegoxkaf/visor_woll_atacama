@@ -1,3 +1,13 @@
+import aguaConfig from "./agua.js";
+import climaConfig from "./clima.js";
+import agriculturaConfig from "./agricultura.js";
+import mineriaConfig from "./mineria.js";
+import otrosConfig from "./otros.js";
+import planificacionConfig from "./planificacion.js";
+import riesgosConfig from "./riesgos.js";
+import sueloConfig from "./suelo.js";
+import energiaConfig from "./energia.js";
+
 const allTemasConfig = {
   agua: aguaConfig,
   clima: climaConfig,

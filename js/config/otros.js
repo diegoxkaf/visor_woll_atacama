@@ -62,11 +62,9 @@ const otrosConfig = {
         Descripcion: "Descripcion",
         "Origen Dato": "Origen de la Informacion",
       },
-
       estiloBase: {
         color: "#4B5945",
         weight: 1,
-
         fillOpacity: 0.8,
       },
     },
@@ -100,11 +98,9 @@ const otrosConfig = {
         Descripcion: "Descripcion",
         "Origen Dato": "Origen de la Informacion",
       },
-
       estiloBase: {
         color: "#4B5945",
         weight: 1,
-
         fillOpacity: 0.8,
       },
     },
@@ -122,11 +118,9 @@ const otrosConfig = {
         NOM_PROVIN: "Provincia",
         NOM_REGION: "Region",
       },
-
       estiloBase: {
         color: "#2d3436",
         weight: 2,
-
         fillOpacity: 0,
       },
     },
@@ -136,16 +130,14 @@ const otrosConfig = {
       atributo: "Tipo",
       nombrePersonalizado: "Toponimia",
       iconos: {
-        // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
-        // Icono alternativo en caso que no encuentre el icono
-        color: "#FF6B6B", del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 4, // Radio del punto
-        weight: 1, del punto
-        fillOpacity: 0.8, del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 4,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: ["Nombre"],
       alias: {
@@ -154,12 +146,12 @@ const otrosConfig = {
       etiquetas: {
         campo: "Nombre",
         estilo: {
-          color: "#000000", // Color del texto
-          fontSize: "9px", // Tamaño de la fuente
-          fontFamily: "Arial, sans-serif", // Familia de la fuente
-          bufferColor: "#88304E", // Color del contorno
-          bufferWidth: 0.3, // Ancho del contorno
-          offsetY: -20, // Añadida propiedad para el offset vertical
+          color: "#000000",
+          fontSize: "9px",
+          fontFamily: "Arial, sans-serif",
+          bufferColor: "#88304E",
+          bufferWidth: 0.3,
+          offsetY: -20,
         },
       },
     },
