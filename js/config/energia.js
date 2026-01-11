@@ -19,11 +19,6 @@ const energiaConfig = {
   cargaInicial: {
     grupos: ["infraestructura", "generacion_actual"],
     capas: ["limite_comunal_linea"],
-    // Grupos que se cargan al activar la dimensión
-    // O también puedes especificar capas individuales si no usas grupos:
-    // capas: ["energia_linea_transmision", "subestaciones"]
-    // Escenario 3: Sin cargaInicial = carga todo (backward compatible)
-    // No defines la propiedad cargaInicial
   },
   grupos: {
     infraestructura: {
@@ -69,13 +64,13 @@ const energiaConfig = {
       url: "energia_linea_transmision.geojson",
       type: "line",
       nombrePersonalizado: "Linea de Transmision Media-Alta Tension",
-      atributo: "TENSION_KV", // Asegúrate de que este atributo exista en tu GeoJSON
+      atributo: "TENSION_KV",
       colores: {
         500: "#FF6B6B",
         220: "#4ECDC4",
         110: "#2A9D8F",
         23: "#E9C46A",
-      }, // Configuracion del Estilo Base de la Linea (Ancho, transparencia, Segmentacion de la Linea)
+      },
       estiloBase: {
         weight: 4,
         opacity: 0.8,
@@ -114,14 +109,14 @@ const energiaConfig = {
       url: "energia_linea_media_transmision.geojson",
       type: "line",
       nombrePersonalizado: "Linea de Transmision - Media Tension",
-      atributo: "DESC_TENSION", // Asegúrate de que este atributo exista en tu GeoJSON
+      atributo: "DESC_TENSION",
       colores: {
         "<=1 kV": "#E2E9AE",
         ">1 kV y <15 kV": "#008296",
         "15 kV": "#D78600",
         "23 kV": "#E9C46A",
         NULL: "#7E8A97",
-      }, // Configuracion del Estilo Base de la Linea (Ancho, transparencia, Segmentacion de la Linea)
+      },
       estiloBase: {
         weight: 4,
         opacity: 0.8,
@@ -155,8 +150,8 @@ const energiaConfig = {
     subestaciones: {
       url: "subestaciones.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "SUBTIPO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Subestaciones Elécticas", // Nombre personalizado de la Capa
+      atributo: "SUBTIPO",
+      nombrePersonalizado: "Subestaciones Elécticas",
       iconos: {
         100: "subestacion.png",
       },
@@ -164,11 +159,11 @@ const energiaConfig = {
         100: "Subestación",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -196,17 +191,17 @@ const energiaConfig = {
     energia_plantas_eolicas: {
       url: "energia_plantas_eolicas.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "TIPO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plantas Eólicas", // Nombre personalizado de la Capa
+      atributo: "TIPO",
+      nombrePersonalizado: "Plantas Eólicas",
       iconos: {
         EOLICO: "eolico.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -234,17 +229,17 @@ const energiaConfig = {
     energia_plantas_solares: {
       url: "energia_plantas_solares.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "TIPO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plantas Solares", // Nombre personalizado de la Capa
+      atributo: "TIPO",
+      nombrePersonalizado: "Plantas Solares",
       iconos: {
         FOTOVOLTAICO: "solar.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -272,17 +267,17 @@ const energiaConfig = {
     energia_termoelectricas: {
       url: "energia_termoelectricas.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "TIPO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plantas Termoelectricas", // Nombre personalizado de la Capa
+      atributo: "TIPO",
+      nombrePersonalizado: "Plantas Termoelectricas",
       iconos: {
         TERMOELECTRICA: "termoelectrica.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -312,17 +307,17 @@ const energiaConfig = {
     energia_hidroelectricas: {
       url: "energia_hidroelectricas.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "TIPO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plantas Hidroelectricas", // Nombre personalizado de la Capa
+      atributo: "TIPO",
+      nombrePersonalizado: "Plantas Hidroelectricas",
       iconos: {
         "HIDRAULICA PASADA": "hidroelectrica.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -354,17 +349,17 @@ const energiaConfig = {
     energia_almacenamiento_combustibles: {
       url: "energia_almacenamiento_combustibles.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "HUSO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Almacenamiento de Combustibles", // Nombre personalizado de la Capa
+      atributo: "HUSO",
+      nombrePersonalizado: "Almacenamiento de Combustibles",
       iconos: {
         "19 S": "almacenamiento_combustible.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -396,17 +391,17 @@ const energiaConfig = {
     energia_terminales_maritimos: {
       url: "energia_terminales_maritimos.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "HUSO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Terminales Maritimos (Combustibles)", // Nombre personalizado de la Capa
+      atributo: "HUSO",
+      nombrePersonalizado: "Terminales Maritimos (Combustibles)",
       iconos: {
         "19 S": "terminal_maritimo.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -446,8 +441,8 @@ const energiaConfig = {
     energia_potencial_fotovoltaico: {
       url: "energia_potencial_fotovoltaico.geojson",
       type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "COMUNA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Generacion Potencial Energia Fotovoltaica 2021", // Nombre personalizado de la CapaMU
+      atributo: "COMUNA",
+      nombrePersonalizado: "Generacion Potencial Energia Fotovoltaica 2021",
       atributo: "REGION",
       colores: {
         Atacama: "#77957C",
@@ -479,8 +474,8 @@ const energiaConfig = {
     energia_potencial_solar_csp: {
       url: "energia_potencial_solar_csp.geojson",
       type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "COMUNA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Generacion Potencial Energia Solar CSP 2021", // Nombre personalizado de la CapaMU
+      atributo: "COMUNA",
+      nombrePersonalizado: "Generacion Potencial Energia Solar CSP 2021",
       atributo: "REGION",
       colores: {
         Atacama: "#2B6CAF",
@@ -512,8 +507,8 @@ const energiaConfig = {
     energia_potencial_eolico: {
       url: "energia_potencial_eolico.geojson",
       type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "COMUNA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Generacion Potencial Energia Eolica 2021", // Nombre personalizado de la CapaMU
+      atributo: "COMUNA",
+      nombrePersonalizado: "Generacion Potencial Energia Eolica 2021",
       atributo: "REGION",
       colores: {
         Atacama: "#F29200",
@@ -545,18 +540,18 @@ const energiaConfig = {
     energia_potencial_hidrobombeo: {
       url: "energia_potencial_hidrobombeo.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "REGION", // Asegúrate de que este atributo exista en tu GeoJSON
+      atributo: "REGION",
       nombrePersonalizado:
-        "Generacion Potencial Energia Hidro Bombeo Agua de Mar 2021", // Nombre personalizado de la Capa
+        "Generacion Potencial Energia Hidro Bombeo Agua de Mar 2021",
       iconos: {
         Atacama: "hidro_bombeo.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "COMUNA",
@@ -598,19 +593,19 @@ const energiaConfig = {
     toponimia: {
       url: "toponimia.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Tipo", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Toponimia", // Nombre personalizado de la Capa
+      atributo: "Tipo",
+      nombrePersonalizado: "Toponimia",
       iconos: {
         // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
         // Icono alternativo en caso que no encuentre el icono
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 4, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 4,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: ["Nombre"],
       alias: {

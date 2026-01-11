@@ -15,11 +15,6 @@ const riesgosConfig = {
       "amenazas_antropicas",
     ],
     capas: ["limite_comunal_linea"],
-    // Grupos que se cargan al activar la dimensión
-    // O también puedes especificar capas individuales si no usas grupos:
-    // capas: ["energia_linea_transmision", "subestaciones"]
-    // Escenario 3: Sin cargaInicial = carga todo (backward compatible)
-    // No defines la propiedad cargaInicial
   },
   grupos: {
     amenazas_geologicas: {
@@ -43,17 +38,17 @@ const riesgosConfig = {
     volcanes_activos: {
       url: "volcanes_activos.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Categoría", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Volcanes Activos", // Nombre personalizado de la Capa
+      atributo: "Categoría",
+      nombrePersonalizado: "Volcanes Activos",
       iconos: {
         5: "volcan_activo.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Sistema volcánico",
@@ -85,17 +80,17 @@ const riesgosConfig = {
     grandes_terremotos: {
       url: "grandes_terremotos.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Categoría", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Grandes Sismos", // Nombre personalizado de la Capa
+      atributo: "Categoría",
+      nombrePersonalizado: "Grandes Sismos",
       iconos: {
         "": "volcan_activo.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Fecha loca",
@@ -121,17 +116,17 @@ const riesgosConfig = {
     incendios_forestales: {
       url: "incendios_forestales.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "codreg", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Incendios Forestales 2015 - 2024", // Nombre personalizado de la Capa
+      atributo: "codreg",
+      nombrePersonalizado: "Incendios Forestales 2015 - 2024",
       iconos: {
         3: "incendio_forestal.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "nom_incen",
@@ -175,17 +170,17 @@ const riesgosConfig = {
     puntos_criticos_invierno_2024: {
       url: "puntos_criticos_invierno_2024.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "region", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Puntos Criticos Invierno 2024", // Nombre personalizado de la Capa
+      atributo: "region",
+      nombrePersonalizado: "Puntos Criticos Invierno 2024",
       iconos: {
         ATACAMA: "puntos_criticos.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "sector",
@@ -212,17 +207,17 @@ const riesgosConfig = {
     remociones_masa: {
       url: "remociones_masa.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Región", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Remociones en Masa", // Nombre personalizado de la Capa
+      atributo: "Región",
+      nombrePersonalizado: "Remociones en Masa",
       iconos: {
         Atacama: "derrumbes.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Código de la remoción en masa",
@@ -282,19 +277,19 @@ const riesgosConfig = {
     toponimia: {
       url: "toponimia.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Tipo", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Toponimia", // Nombre personalizado de la Capa
+      atributo: "Tipo",
+      nombrePersonalizado: "Toponimia",
       iconos: {
         // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
         // Icono alternativo en caso que no encuentre el icono
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 4, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 4,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: ["Nombre"],
       alias: {

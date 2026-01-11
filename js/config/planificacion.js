@@ -20,11 +20,6 @@ const planificacionConfig = {
   cargaInicial: {
     grupos: ["ipt_regionales"],
     capas: ["limite_comunal_linea"],
-    // Grupos que se cargan al activar la dimensión
-    // O también puedes especificar capas individuales si no usas grupos:
-    // capas: ["energia_linea_transmision", "subestaciones"]
-    // Escenario 3: Sin cargaInicial = carga todo (backward compatible)
-    // No defines la propiedad cargaInicial
   },
   grupos: {
     ipt_comunales: {
@@ -58,9 +53,9 @@ const planificacionConfig = {
   estilo: {
     borde_costero: {
       url: "borde_costero.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA_1", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Macrozonificacion de los Usos del Borde Costero", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA_1",
+      nombrePersonalizado: "Macrozonificacion de los Usos del Borde Costero",
       colores: {
         NULL: "#DDA853",
         HC: "#FFFBCA",
@@ -110,9 +105,9 @@ const planificacionConfig = {
     },
     plan_regulador_intercomunal_costero_norte: {
       url: "plan_regulador_intercomunal_costero_norte.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Intercomunal Costero - Zona Norte", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Intercomunal Costero - Zona Norte",
       colores: {
         AR: "#DDA853",
         "AR-1": "#FFFBCA",
@@ -170,9 +165,9 @@ const planificacionConfig = {
     },
     plan_regulador_intercomunal_costero_sur: {
       url: "plan_regulador_intercomunal_costero_sur.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Intercomunal Costero - Zona Sur", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Intercomunal Costero - Zona Sur",
       colores: {
         AR: "#DDA853",
         "AR-1": "#FFFBCA",
@@ -230,9 +225,9 @@ const planificacionConfig = {
     },
     prc_caldera: {
       url: "prc_caldera.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Caldera", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Caldera",
       colores: {
         "A-2": "#DDA853",
         AP: "#FFFBCA",
@@ -328,9 +323,9 @@ const planificacionConfig = {
     },
     prc_chañaral: {
       url: "prc_chañaral.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Chañaral", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Chañaral",
       colores: {
         ZE1: "#DDA853",
         ZE2: "#FFFBCA",
@@ -386,9 +381,9 @@ const planificacionConfig = {
     },
     prc_chañaral_el_salado: {
       url: "prc_chañaral_el_salado.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Seccional El Salado", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Seccional El Salado",
       colores: {
         ZE1: "#DDA853",
         ZE2: "#FFFBCA",
@@ -446,9 +441,9 @@ const planificacionConfig = {
     },
     prc_chañaral_flamenco: {
       url: "prc_chañaral_flamenco.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Seccional Flamenco", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Seccional Flamenco",
       colores: {
         ZE1: "#DDA853",
         ZE2: "#FFFBCA",
@@ -506,9 +501,9 @@ const planificacionConfig = {
     },
     prc_chañaral_portofino: {
       url: "prc_chañaral_portofino.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Seccional Portofino", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Seccional Portofino",
       colores: {
         ZE1: "#DDA853",
         ZE2: "#FFFBCA",
@@ -566,9 +561,9 @@ const planificacionConfig = {
     },
     prc_copiapo: {
       url: "prc_copiapo.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Copiapó", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Copiapó",
       colores: {
         "Z-A": "#DDA853",
         "Z-A1": "#FFFBCA",
@@ -624,9 +619,9 @@ const planificacionConfig = {
     },
     prc_diego_almagro: {
       url: "prc_diego_almagro.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Diego de Almagro", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Diego de Almagro",
       colores: {
         "Z-AVE": "#DDA853",
         "Z-AVP": "#FFFBCA",
@@ -684,9 +679,9 @@ const planificacionConfig = {
     },
     prc_freirina: {
       url: "prc_freirina.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Freirina", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Freirina",
       colores: {
         C: "#DDA853",
         C1: "#FFFBCA",
@@ -739,9 +734,9 @@ const planificacionConfig = {
     },
     prc_huasco: {
       url: "prc_huasco.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Huasco", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Huasco",
       colores: {
         A1: "#DDA853",
         A2: "#FFFBCA",
@@ -811,9 +806,9 @@ const planificacionConfig = {
     },
     prc_vallenar: {
       url: "prc_vallenar.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "ZONA", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plan Regulador Comunal - Vallenar", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "ZONA",
+      nombrePersonalizado: "Plan Regulador Comunal - Vallenar",
       colores: {
         ZD: "#DDA853",
         ZH: "#FFFBCA",
@@ -865,9 +860,9 @@ const planificacionConfig = {
     },
     limites_urbanos: {
       url: "limites_urbanos.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "REG", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Limites Urbanos", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "REG",
+      nombrePersonalizado: "Limites Urbanos",
       colores: {
         Atacama: "#DDA853",
       },
@@ -923,20 +918,18 @@ const planificacionConfig = {
     },
     toponimia: {
       url: "toponimia.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Tipo", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Toponimia", // Nombre personalizado de la Capa
+      type: "point",
+      atributo: "Tipo",
+      nombrePersonalizado: "Toponimia",
       iconos: {
-        // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
-        // Icono alternativo en caso que no encuentre el icono
-        color: "#FF6B6B", // Color del borde del punto
+        color: "#FF6B6B",
         fillColor: "#FF6B6B", // Color de relleno del punto
         radius: 4, // Radio del punto
         weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        fillOpacity: 0.8,
       },
       popupCampos: ["Nombre"],
       alias: {
@@ -946,7 +939,7 @@ const planificacionConfig = {
         campo: "Nombre",
         estilo: {
           color: "#000000", // Color del texto
-          fontSize: "9px", // Tamaño de la fuente
+          fontSize: "9px",
           fontFamily: "Arial, sans-serif", // Familia de la fuente
           bufferColor: "#88304E", // Color del contorno
           bufferWidth: 0.3, // Ancho del contorno

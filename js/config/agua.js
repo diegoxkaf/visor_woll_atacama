@@ -23,11 +23,6 @@ const aguaConfig = {
   cargaInicial: {
     grupos: ["hidrografia", "reservas", "infraestructura"],
     capas: ["limite_comunal_linea"],
-    // Grupos que se cargan al activar la dimensión
-    // O también puedes especificar capas individuales si no usas grupos:
-    // capas: ["energia_linea_transmision", "subestaciones"]
-    // Escenario 3: Sin cargaInicial = carga todo (backward compatible)
-    // No defines la propiedad cargaInicial
   },
   grupos: {
     hidrografia: {
@@ -75,13 +70,13 @@ const aguaConfig = {
       url: "hidrografia.geojson",
       type: "line",
       nombrePersonalizado: "Red Hidrografica",
-      atributo: "tipo_bcn", // Asegúrate de que este atributo exista en tu GeoJSON
+      atributo: "tipo_bcn",
       colores: {
         Quebrada: "#8af1ffff",
         Arroyo: "#54cfffff",
         Estero: "#2abccfff",
         Rio: "#3e6bffff",
-      }, // Configuracion del Estilo Base de la Linea (Ancho, transparencia, Segmentacion de la Linea)
+      },
       estiloBase: {
         weight: 2.5,
         opacity: 0.8,
@@ -113,17 +108,17 @@ const aguaConfig = {
     apr_rural: {
       url: "apr_rural.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "COD_REG", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Servicios Sanitarios Rurales (Ex APR)", // Nombre personalizado de la Capa
+      atributo: "COD_REG",
+      nombrePersonalizado: "Servicios Sanitarios Rurales (Ex APR)",
       iconos: {
         "03": "Torre Agua.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE",
@@ -151,17 +146,17 @@ const aguaConfig = {
     plantas_desaladoras_puntos: {
       url: "plantas_desaladoras_puntos.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Sistema", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plantas Desaladoras", // Nombre personalizado de la Capa
+      atributo: "Sistema",
+      nombrePersonalizado: "Plantas Desaladoras",
       iconos: {
         "Osmosis Inversa": "desaladoras.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Nombre",
@@ -235,8 +230,8 @@ const aguaConfig = {
     derechos_agua_2025: {
       url: "derechos_agua_2025.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      nombrePersonalizado: "Derechos de Aprovechamiento de Agua", // Nombre personalizado de la Capa
-      atributo: "Uso del Agua", // Asegúrate de que este atributo exista en tu GeoJSON
+      nombrePersonalizado: "Derechos de Aprovechamiento de Agua",
+      atributo: "Uso del Agua",
       iconos: {
         "Bebida/Uso Domestico/Saneamiento": "Derechos Agua.png",
         "Otros Usos": "derechos_otros_usos.png",
@@ -246,11 +241,11 @@ const aguaConfig = {
         "Uso Minero": "Derechos Mineria.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Nombre Solicitante",
@@ -315,17 +310,17 @@ const aguaConfig = {
     plantas_aguas_servidas: {
       url: "plantas_aguas_servidas.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "REGION", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plantas de Tratamiento de Aguas Servidas", // Nombre personalizado de la Capa
+      atributo: "REGION",
+      nombrePersonalizado: "Plantas de Tratamiento de Aguas Servidas",
       iconos: {
         "03": "planta_tratamiento.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE_OBR",
@@ -362,17 +357,17 @@ const aguaConfig = {
     puntos_descargas: {
       url: "puntos_descargas.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "REGION", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Ptos. Descargas Plantas Aguas Servidas", // Nombre personalizado de la Capa
+      atributo: "REGION",
+      nombrePersonalizado: "Ptos. Descargas Plantas Aguas Servidas",
       iconos: {
         "03": "agua_descarga.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE_OBR",
@@ -780,19 +775,19 @@ const aguaConfig = {
     toponimia: {
       url: "toponimia.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Tipo", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Toponimia", // Nombre personalizado de la Capa
+      atributo: "Tipo",
+      nombrePersonalizado: "Toponimia",
       iconos: {
         // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
         // Icono alternativo en caso que no encuentre el icono
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 4, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 4,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: ["Nombre"],
       alias: {

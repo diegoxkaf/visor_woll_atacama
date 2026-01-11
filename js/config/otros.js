@@ -10,11 +10,6 @@ const otrosConfig = {
   cargaInicial: {
     grupos: ["conservacion"],
     capas: ["limite_comunal_linea"],
-    // Grupos que se cargan al activar la dimensión
-    // O también puedes especificar capas individuales si no usas grupos:
-    // capas: ["energia_linea_transmision", "subestaciones"]
-    // Escenario 3: Sin cargaInicial = carga todo (backward compatible)
-    // No defines la propiedad cargaInicial
   },
   grupos: {
     conservacion: {
@@ -29,7 +24,7 @@ const otrosConfig = {
   estilo: {
     wms_ide_minagri: {
       tipo: "wms",
-      servicio: "ide_minagri", // debe coincidir con la key en wms_services.js
+      servicio: "ide_minagri",
       nombrePersonalizado: "Destinos Turísticos (IDE Chile)",
       popupCampos: ["NOMBRE", "TIPO", "REGION"],
       alias: { NOMBRE: "Nombre", TIPO: "Tipo", REGION: "Región" },
@@ -37,13 +32,13 @@ const otrosConfig = {
     },
     wms_ide_ciren_agroindustrias: {
       tipo: "wms",
-      servicio: "ide_ciren_agroindustrias", // debe coincidir con la key en wms_services.js
+      servicio: "ide_ciren_agroindustrias",
     },
     bienes_nacionales_protegidos: {
       url: "bienes_nacionales_protegidos.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "REGION", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Bienes Nacionales Protegidos", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "REGION",
+      nombrePersonalizado: "Bienes Nacionales Protegidos",
       colores: {
         Atacama: "#057a57ff",
       },
@@ -67,19 +62,19 @@ const otrosConfig = {
         Descripcion: "Descripcion",
         "Origen Dato": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
+
       estiloBase: {
-        color: "#4B5945", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#4B5945",
+        weight: 1,
+
+        fillOpacity: 0.8,
       },
     },
     sistema_areas_protegidas: {
       url: "sistema_areas_protegidas.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
-      atributo: "TERRITORIO", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Sistema Nacional de Areas Protegidas", // Nombre personalizado de la Capa
+      type: "polygon",
+      atributo: "TERRITORIO",
+      nombrePersonalizado: "Sistema Nacional de Areas Protegidas",
       colores: {
         Continente: "#216dfaff",
       },
@@ -105,12 +100,12 @@ const otrosConfig = {
         Descripcion: "Descripcion",
         "Origen Dato": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
+
       estiloBase: {
-        color: "#4B5945", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#4B5945",
+        weight: 1,
+
+        fillOpacity: 0.8,
       },
     },
     limite_comunal_linea: {
@@ -127,30 +122,30 @@ const otrosConfig = {
         NOM_PROVIN: "Provincia",
         NOM_REGION: "Region",
       },
-      // Personalizar el color del borde y la transparencia
+
       estiloBase: {
-        color: "#2d3436", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#2d3436",
+        weight: 2,
+
+        fillOpacity: 0,
       },
     },
     toponimia: {
       url: "toponimia.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Tipo", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Toponimia", // Nombre personalizado de la Capa
+      type: "point",
+      atributo: "Tipo",
+      nombrePersonalizado: "Toponimia",
       iconos: {
         // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
         // Icono alternativo en caso que no encuentre el icono
-        color: "#FF6B6B", // Color del borde del punto
+        color: "#FF6B6B", del punto
         fillColor: "#FF6B6B", // Color de relleno del punto
         radius: 4, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        weight: 1, del punto
+        fillOpacity: 0.8, del punto
       },
       popupCampos: ["Nombre"],
       alias: {

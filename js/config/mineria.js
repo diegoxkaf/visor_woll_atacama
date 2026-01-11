@@ -14,11 +14,6 @@ const mineriaConfig = {
   cargaInicial: {
     grupos: ["instalaciones", "infraestructura"],
     capas: ["limite_comunal_linea"],
-    // Grupos que se cargan al activar la dimensión
-    // O también puedes especificar capas individuales si no usas grupos:
-    // capas: ["energia_linea_transmision", "subestaciones"]
-    // Escenario 3: Sin cargaInicial = carga todo (backward compatible)
-    // No defines la propiedad cargaInicial
   },
   grupos: {
     yacimientos: {
@@ -51,8 +46,8 @@ const mineriaConfig = {
     sonami_mapa_minero: {
       url: "sonami_mapa_minero.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      nombrePersonalizado: "Instalaciones Mediana y Gran Mineria", // Nombre personalizado de la Capa
-      atributo: "Tipo Mineral", // Asegúrate de que este atributo exista en tu GeoJSON
+      nombrePersonalizado: "Instalaciones Mediana y Gran Mineria",
+      atributo: "Tipo Mineral",
       iconos: {
         "Mineria no Metalica": "mina_mineria_no_metalica.png",
         Cobre: "mina_cobre.png",
@@ -60,11 +55,11 @@ const mineriaConfig = {
         "Mineria Metalica": "mina_mineria_metalica.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Nombre",
@@ -100,8 +95,8 @@ const mineriaConfig = {
     relaves_mineros_sernageomin: {
       url: "relaves_mineros_sernageomin.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "ESTADO_INS", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Relaves Mineros", // Nombre personalizado de la Capa
+      atributo: "ESTADO_INS",
+      nombrePersonalizado: "Relaves Mineros",
       iconos: {
         INACTIVO: "Relave_inactivo.png",
         ACTIVO: "Relave_activo.png",
@@ -109,11 +104,11 @@ const mineriaConfig = {
         "EN CONSTRUCCION": "relaves_construccion.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "NOMBRE_INS",
@@ -153,8 +148,8 @@ const mineriaConfig = {
     yacimientos: {
       url: "yacimientos.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "GRUPO_RECU", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Yacimientos Minerales", // Nombre personalizado de la Capa
+      atributo: "GRUPO_RECU",
+      nombrePersonalizado: "Yacimientos Minerales",
       iconos: {
         Ag: "ag.png",
         "Ag-(Au)": "ag_au.png",
@@ -288,11 +283,11 @@ const mineriaConfig = {
         Yeso: "yeso.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "GRUPO_RECU",
@@ -328,17 +323,17 @@ const mineriaConfig = {
     plantas_desaladoras_puntos: {
       url: "plantas_desaladoras_puntos.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Sistema", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Plantas Desaladoras", // Nombre personalizado de la Capa
+      atributo: "Sistema",
+      nombrePersonalizado: "Plantas Desaladoras",
       iconos: {
         "Osmosis Inversa": "desaladoras.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Nombre",
@@ -442,17 +437,17 @@ const mineriaConfig = {
     puertos: {
       url: "puertos.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "region", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Puertos", // Nombre personalizado de la Capa
+      atributo: "region",
+      nombrePersonalizado: "Puertos",
       iconos: {
         3: "Infraestructura_dop.png",
       },
       estiloAlternativo: {
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 5, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 5,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: [
         "Nombre",
@@ -488,7 +483,7 @@ const mineriaConfig = {
     distritos_mineros: {
       url: "distritos_mineros.geojson",
       type: "polygon", // Tipo de capa: point, line, polygon
-      nombrePersonalizado: "Distritos Mineros", // Nombre personalizado de la CapaMU
+      nombrePersonalizado: "Distritos Mineros",
       atributo: "Region",
       colores: {
         Atacama: "#ec5628ff",
@@ -540,19 +535,19 @@ const mineriaConfig = {
     toponimia: {
       url: "toponimia.geojson",
       type: "point", // Tipo de capa: point, line, polygon
-      atributo: "Tipo", // Asegúrate de que este atributo exista en tu GeoJSON
-      nombrePersonalizado: "Toponimia", // Nombre personalizado de la Capa
+      atributo: "Tipo",
+      nombrePersonalizado: "Toponimia",
       iconos: {
         // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
         // Icono alternativo en caso que no encuentre el icono
-        color: "#FF6B6B", // Color del borde del punto
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 4, // Radio del punto
-        weight: 1, // Grosor del borde del punto
-        fillOpacity: 0.8, // Transparencia del relleno del punto
+        color: "#FF6B6B",
+        fillColor: "#FF6B6B",
+        radius: 4,
+        weight: 1,
+        fillOpacity: 0.8,
       },
       popupCampos: ["Nombre"],
       alias: {
