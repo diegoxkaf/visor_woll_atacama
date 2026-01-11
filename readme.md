@@ -2,18 +2,18 @@
 
 ## 🚀 Descripción General
 
-El **Visor Territorial Atacama Andes Value** es una plataforma SIG (Sistema de Información Geográfica) de última generación diseñada para la gestión y visualización de datos estratégicos en la Región de Atacama. La plataforma integra visualización geoespacial avanzada con una capa de inteligencia artificial para democratizar el acceso al análisis de datos territoriales.
+El **Visor Territorial Atacama Andes Value** es una plataforma SIG (Sistema de Información Geográfica) diseñada para la gestión y visualización de datos estratégicos en la Región de Atacama. La plataforma integra visualización geoespacial con una capa de inteligencia artificial para democratizar el acceso al análisis de datos territoriales.
 
 ---
 
 ## 🏗️ Arquitectura del Sistema
 
-La aplicación sigue un patrón de **Arquitectura Modular de Capas** desacopladas, lo que garantiza escalabilidad, mantenibilidad y alto rendimiento.
+La aplicación sigue un patrón de **Arquitectura Modular de Capas** desacopladas.
 
 ### 🧩 Capas de la Aplicación
 
 1.  **Capa de Presentación (UI/UX):**
-    *   Interfaz basada en **Leaflet.js** y **Vanilla CSS/JS** para máxima velocidad.
+    *   Interfaz basada en **Leaflet.js** y **Vanilla CSS/JS**.
     *   Dashboard dual con Sidebars dinámicos para control de capas y resultados de búsqueda.
     *   Adaptabilidad total (Responsive Design) para dispositivos móviles y estaciones de trabajo.
 
@@ -25,71 +25,94 @@ La aplicación sigue un patrón de **Arquitectura Modular de Capas** desacoplada
 3.  **Capa de Inteligencia Artificial (AI Agent):**
     *   **Backend**: Funciones Serverless en Vercel (`api/chat.js`).
     *   **LLM**: Integración con modelos de lenguaje masivos vía **Groq**.
-    *   **Context Aware**: Sistema de indexación geográfica (`geojson-indexer.js`) que permite a la IA entender la topología del territorio.
+    *   **Context Aware**: Sistema de indexación geográfica que permite a la IA entender la topología del territorio.
 
 4.  **Capa de Datos y Estado:**
     *   **Single Source of Truth**: Gestión de estado centralizada en `appState.js`.
-    *   **Data Lake Local**: Repositorio de GeoJSONs optimizados en la raíz del proyecto.
-    *   **Web Workers**: Procesamiento de datos pesados fuera del hilo principal de la interfaz para evitar bloqueos.
+    *   **Data Lake Local**: Repositorio de GeoJSONs optimizados.
+    *   **Web Workers**: Procesamiento de datos pesados fuera del hilo principal.
 
 ---
 
-## 📂 Estructura de Directorios
+## 📂 Guía de Archivos y Directorios
 
-```text
-Visor_Atacama/
-├── api/                      # 🤖 Backend AI (Serverless Functions)
-│   ├── chat.js               # Endpoint principal de la IA
-│   ├── context-builder.js    # Construcción de contexto territorial para el LLM
-│   ├── geojson-indexer.js    # Transformación de GeoJSON a índices de búsqueda IA
-│   └── query-analyzer.js     # Análisis de intención de búsqueda
-├── assets/                   # 🎨 Recursos estáticos (iconos, imágenes)
-├── css/                      # 💅 Estilos (Base, Componentes, Mobile)
-├── geojson/                  # 🗺️ Repositorio de datos espaciales (69+ capas)
-├── js/                       # 🧠 Lógica del Cliente
-│   ├── config/               # Capa de configuración inmutable (por dimensión)
-│   ├── store/                # appState.js (Soterrado de estado global)
-│   ├── utils/                # Utilidades modulares (Buscador, Sidebars, Capas)
-│   └── workers/              # Procesamiento paralelo (Web Workers)
-├── index.html                # Punto de entrada y estructura DOM
-├── vercel.json               # Configuración de despliegue y ruteo
-└── readme.md                 # Esta documentación
+### 📄 JavaScript (`/js`)
+
+#### `js/config/` (Configuración Dinámica)
+*   **`allTemasConfig.js`**: Centraliza todas las dimensiones. Es el punto de unión.
+*   **`agua.js`, `mineria.js`, etc.**: Archivos específicos por dimensión. Contienen la definición de capas, grupos y estilos.
+*   **`capasBase.js`**: Configuración de los mapas base (OpenStreetMap, Satélite, etc.).
+*   **`constants.js`**: Valores globales como coordenadas iniciales, niveles de zoom y selectores DOM.
+*   **`leyendaAliases.js`**: Diccionario para traducir nombres técnicos a nombres legibles en la leyenda.
+
+#### `js/utils/` (Motores Lógicos)
+*   **`layerUtils.js`**: Carga, visualización y filtrado de capas GeoJSON y WMS.
+*   **`sidebarUtils.js`**: Gestión de la interfaz de usuario de los paneles laterales.
+*   **`searchControl.js`**: Motor de búsqueda interna que indexa las propiedades de las capas.
+*   **`styleUtils.js`**: Define cómo se ven los puntos, líneas y polígonos.
+*   **`popupUtils.js`**: Gestiona el formato y contenido de las burbujas de información.
+*   **`errorHandler.js`**: Captura errores para evitar que la aplicación se detenga.
+*   **`logger.js`**: Registra eventos en la consola para depuración profesional.
+
+### 🎨 Estilos (`/css`)
+*   **`base.css`**: Define la paleta de colores corporativa (vía variables CSS), tipografía y el layout estructural.
+*   **`components.css`**: Estilos específicos para botones, formularios, paneles laterales y popups.
+*   **`mobile.css`**: Ajustes específicos para que la experiencia sea fluida en teléfonos y tablets.
+
+### 🖼️ Activos (`/assets`)
+*   **`/icons`**: Aloja los archivos `.png` o `.svg` usados para los marcadores en el mapa.
+*   **`/img`**: Logotipos y recursos visuales de la interfaz.
+
+---
+
+## ⚙️ Manual de Configuración de Capas
+
+Para agregar o modificar una capa, debe editar el archivo correspondiente en `js/config/`.
+
+### Estructura de una Capa:
+```javascript
+nombre_capa: {
+  url: "archivo.geojson",          // Nombre del archivo en la carpeta /geojson
+  type: "point",                  // point, line o polygon
+  atributo: "NOMBRE_REGION",       // Atributo base para el filtrado/colores
+  nombrePersonalizado: "Mi Capa",  // Título que verá el usuario
+  iconos: {                       // Solo para puntos
+    "ValorAtributo": "icono.png"
+  },
+  colores: {                      // Solo para polígonos/líneas
+    "ValorAtributo": "#HEXCODE"
+  },
+  estiloBase: {                   // Propiedades visuales fijas
+    weight: 2,
+    color: "#000",
+    fillOpacity: 0.5
+  },
+  popupCampos: ["NOMBRE", "ESTADO"], // Campos a mostrar en el popup
+  alias: {                        // Traducción de los campos del popup
+    "NOMBRE": "Nombre de la Unidad",
+    "ESTADO": "Situación Actual"
+  },
+  etiquetas: {                    // Configuración de texto sobre el mapa
+    campo: "NOMBRE",
+    estilo: { color: "#fff", fontSize: "10px" }
+  }
+}
 ```
 
 ---
 
-## 🌟 Funcionalidades Clave
-
-### 1. Asistente IA Territorial
-Integración de un chatbot inteligente que responde consultas sobre el mapa. La IA no solo "habla", sino que comprende las capas cargadas y puede guiar al usuario a través de la geografía regional basándose en datos reales.
-
-### 2. Motor de Búsqueda de Alto Rendimiento
-Buscador global que indexa atributos de todas las capas cargadas. Permite navegación instantánea ("FlyTo") y filtrado dinámico de información compleja.
-
-### 3. Sistema de Dimensiones Flexibles
-Arquitectura basada en "Temas" que permite alternar entre sectores (Agua, Energía, Minería, Planificación, etc.) con un solo clic, cargando grupos de capas preconfigurados y leyendas específicas.
-
----
-
-## 🛠️ Guía de Desarrollo para Seniors
+## 🛠️ Guía de Desarrollo
 
 ### Gestión del Estado
 Nunca modifique el DOM directamente para estados globales. Use `appState.js`:
 ```javascript
 import { appState } from './store/appState.js';
-// El estado es reactivo a la carga de capas y cambios de dimensión
 ```
 
-### Agregar nuevas capas
-Para mantener la integridad, siga el flujo de configuración:
-1. Agregue el `.geojson` a la carpeta `/geojson`.
-2. Configure el estilo y leyendas en el archivo correspondiente dentro de `js/config/`.
-3. El sistema cargará y registrará automáticamente la capa en el buscador global.
-
-### Logging y Errores
-La plataforma incluye un sistema de auditoría interna:
-*   Use `logger.js` para eventos de ciclo de vida.
-*   Encapsule lógica crítica en `errorHandler.js` para evitar caídas del sistema en producción.
+### Agregar nuevas dimensiones
+1. Cree un nuevo archivo `.js` en `js/config/`.
+2. Impórtelo en `allTemasConfig.js`.
+3. Agréguelo al objeto `allTemasConfig`.
 
 ---
 
@@ -98,13 +121,12 @@ La plataforma incluye un sistema de auditoría interna:
 El proyecto está optimizado para **Vercel**:
 1. Conecte su cuenta de GitHub.
 2. Configure la variable de entorno `GROQ_API_KEY`.
-3. El despliegue se realizará automáticamente al detectar un `push` a la rama `main`.
+3. El despliegue se realizará automáticamente.
 
 ---
 
 ## 📜 Licencia y Propiedad
 Proyecto desarrollado para **Atacama Andes Value**.
-Documentación y arquitectura optimizada para escalabilidad 2025-2026.
 
-**Versión**: 3.0 (Versión Pro - Limpia)
+**Versión**: 3.0 
 **Última Revisión**: Enero 2026
