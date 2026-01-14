@@ -1,11 +1,7 @@
-
 node_modules/
 .git/
-.env
-.env.local
-*.log
+.env*
 .DS_Store
 .vscode/
-*.md
-image.png
 .antigravityignore
+*.log
