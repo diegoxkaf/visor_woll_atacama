@@ -909,14 +909,3 @@ function renderResults(results, container, navContainer, navCounter) {
         container.appendChild(moreDiv);
     }
 }
-
-// ============================================================================
-// DIAGNÓSTICO Y MONITOREO (DESARROLLO)
-// ============================================================================
-
-console.groupEnd();
-
-if (typeof window !== 'undefined') {
-    window.diagnosticarBuscador = diagnosticarBuscador;
-    window.benchmarkBusqueda = benchmarkBusqueda;
-}

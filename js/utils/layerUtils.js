@@ -14,7 +14,7 @@ import { bindPopup } from "./popupUtils.js";
 
 import wmsConfig from "../config/wms_services.js";
 import { PATHS, MAP_CONFIG } from "../config/constants.js";
-import { appState, addLayer, getLayer, markLayerAsLoaded, isLayerLoaded, removeLayer, updateLayerOrder, clearAllLayers } from "../store/appState.js";
+import { appState, addLayer, getLayer, markLayerAsLoaded, isLayerLoaded, removeLayer, updateLayerOrder, clearAllLayers, setLayerData, getLayerData } from "../store/appState.js";
 import { logger, createContextLogger } from "./logger.js";
 import { LayerLoadError, NetworkError, handleError } from "./errorHandler.js";
 
@@ -154,6 +154,7 @@ export async function cargarCapaIndividual(
     }
 
     const data = await fetchLayerData(capaNombre, configCapa);
+    setLayerData(capaNombre, data); // Almacenar datos para el chat IA
 
     // data = transformCoordinates(data); // Ya procesado en el worker
 
@@ -349,6 +350,34 @@ export function cargarCapaWMS(servicioKey, opcionesExtra = {}) {
 
 
   return wmsLayer;
+}
+
+/**
+ * Pre-carga todas las capas del proyecto para el chat IA
+ * @param {Array} layerConfigs - Lista de configuraciones de capas
+ * @param {Function} onProgress - Callback para reportar progreso
+ * @returns {Promise<void>}
+ */
+export async function loadAllLayersForChat(layerConfigs, onProgress) {
+  let loaded = 0;
+  const total = layerConfigs.length;
+
+  const promises = layerConfigs.map(async (item) => {
+    try {
+      if (!isLayerLoaded(item.name) && !getLayerData(item.name)) {
+        const data = await fetchLayerData(item.name, item.config);
+        setLayerData(item.name, data);
+      }
+      loaded++;
+      if (onProgress) onProgress(loaded, total, item.name);
+    } catch (err) {
+      console.warn(`Error pre-cargando capa ${item.name} para el chat:`, err);
+      loaded++;
+      if (onProgress) onProgress(loaded, total, item.name);
+    }
+  });
+
+  await Promise.all(promises);
 }
 
 export function enableWMSGetFeatureInfo(servicioKey, wmsLayer, config = {}) {

@@ -20,6 +20,9 @@ export const appState = {
         /** @type {Map<string, L.Layer>} Capas por nombre */
         byName: new Map(),
 
+        /** @type {Map<string, object>} Datos GeoJSON originales */
+        geojsonData: new Map(),
+
         /** @type {Array<string>} Orden de apilamiento de capas */
         ordered: [],
 
@@ -150,6 +153,24 @@ export function updateLayerOrder(name, newPosition) {
         appState.layers.ordered.splice(currentIndex, 1);
     }
     appState.layers.ordered.splice(newPosition, 0, name);
+}
+
+/**
+ * Almacena los datos GeoJSON de una capa
+ * @param {string} name - Nombre de la capa
+ * @param {object} data - Datos GeoJSON
+ */
+export function setLayerData(name, data) {
+    appState.layers.geojsonData.set(name, data);
+}
+
+/**
+ * Obtiene los datos GeoJSON de una capa
+ * @param {string} name - Nombre de la capa
+ * @returns {object|undefined} Datos GeoJSON
+ */
+export function getLayerData(name) {
+    return appState.layers.geojsonData.get(name);
 }
 
 if (typeof window !== "undefined") {
