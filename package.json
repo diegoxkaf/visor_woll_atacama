@@ -1,0 +1,9 @@
+{
+  "name": "visor-woll-atacama",
+  "version": "1.0.0",
+  "description": "Visor Territorial Water Oriented Living Lab (WoLL) - Región de Atacama",
+  "type": "module",
+  "engines": {
+    "node": ">=20.x"
+  }
+}
