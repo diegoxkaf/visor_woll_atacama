@@ -1,15 +1,11 @@
-# Excluir archivos pesados del bundle de funciones serverless
-# Los GeoJSON se sirven como assets estáticos, no se necesitan en el servidor
-geojson/
 
-# No se necesitan archivos de código fuente del frontend en las funciones del servidor
-js/
-css/
-assets/
-
-# Otros archivos innecesarios para el runtime
+node_modules/
+.git/
+.env
+.env.local
+*.log
+.DS_Store
+.vscode/
 *.md
 image.png
-.git/
 .antigravityignore
-node_modules/
