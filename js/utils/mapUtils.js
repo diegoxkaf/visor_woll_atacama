@@ -21,7 +21,7 @@ export function initMap(idElemento, coordenadas, zoom) {
 
     // Configurar opciones del mapa
     const mapOptions = {
-        zoomControl: false // Desactivamos el control por defecto
+        zoomControl: false
     };
 
     const map = L.map(idElemento, mapOptions).setView(coordenadas, zoom);
@@ -77,7 +77,6 @@ export function changeBaseLayer(map, nuevaCapa, capaActual) {
  * @returns {Object} Los datos GeoJSON transformados
  */
 export function transformCoordinates(data) {
-    // Comprobar si el CRS es EPSG:3857
     const crs = data.crs && data.crs.properties && data.crs.properties.name;
     if (crs === 'urn:ogc:def:crs:EPSG::3857' || crs === 'EPSG:3857') {
         const transformedFeatures = data.features.map(feature => {

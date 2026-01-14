@@ -4,10 +4,7 @@
  * @module store/appState
  */
 
-/**
- * Estado global de la aplicación
- * @type {Object}
- */
+
 export const appState = {
     /** @type {L.Map|null} Instancia del mapa de Leaflet */
     map: null,
@@ -134,19 +131,19 @@ export function setActiveDimension(dimension) {
     appState.ui.activeDimension = dimension;
 }
 
-/**
- * Obtiene la dimensión activa
- * @returns {string|null} Nombre de la dimensión activa
- */
+
+// Obtiene la dimensión activa
+// @returns {string|null} Nombre de la dimensión activa
+
 export function getActiveDimension() {
     return appState.ui.activeDimension;
 }
 
-/**
- * Actualiza el orden de una capa
- * @param {string} name - Nombre de la capa
- * @param {number} newPosition - Nueva posición
- */
+
+// Actualiza el orden de una capa
+// @param {string} name - Nombre de la capa
+// @param {number} newPosition - Nueva posición
+
 export function updateLayerOrder(name, newPosition) {
     const currentIndex = appState.layers.ordered.indexOf(name);
     if (currentIndex > -1) {
@@ -155,7 +152,6 @@ export function updateLayerOrder(name, newPosition) {
     appState.layers.ordered.splice(newPosition, 0, name);
 }
 
-// Hacer el estado accesible globalmente para debugging
 if (typeof window !== "undefined") {
     window.appState = appState;
 }

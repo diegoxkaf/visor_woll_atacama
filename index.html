@@ -5,26 +5,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Visor Water Oriented Living Lab</title>
-
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-
-  <!-- Estilos personalizados - ORDEN IMPORTANTE -->
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/components.css" />
   <link rel="stylesheet" href="css/desktop.css" />
   <link rel="stylesheet" href="css/mobile.css" />
-
-  <!-- Favicon -->
   <link rel="icon" href="assets/img/cropped-favicon-192x192.png" type="image/x-icon" />
 </head>
 
@@ -391,7 +379,7 @@
 
       // Contenedores desktop (aside izquierdo)
       const desktopLayersContainer =
-        document.getElementById("sidebar-layers"); // div que contiene <ul>
+        document.getElementById("sidebar-layers");
       const desktopBaseContainer = document.getElementById(
         "sidebar-base-container"
       ); // div que contiene <ul>
@@ -403,10 +391,10 @@
       // Contenedores mobile (también en aside izquierdo)
       const mobileLayersDiv = document.getElementById(
         "sidebar-layers-mobile"
-      ); // div
+      );
       const mobileBaseMobileUl = document.getElementById(
         "sidebar-base-layers-mobile"
-      ); // ul
+      );
       const mobileBaseDiv = mobileBaseMobileUl
         ? mobileBaseMobileUl.parentElement
         : null;
@@ -415,40 +403,31 @@
         if (!node || !container) {
           return;
         }
-        if (container.contains(node)) return; // ya está ahí
+        if (container.contains(node)) return;
 
-        // Eliminar placeholder ul distinto si existe dentro del contenedor destino
-        // para evitar duplicados visuales si la estructura fuera diferente
         const placeholder = container.querySelector("ul");
         if (placeholder && placeholder !== node) {
-          // Opcional: placeholder.remove(); 
-          // (Depende de si queremos reemplazar contenido o añadir. Aquí añadimos.)
-        }
 
-        // Mover el nodo al nuevo contenedor
-        // appendChild lo mueve automáticamente de su ubicación anterior
+        }
         container.appendChild(node);
       }
 
       function adaptSidebarPlacement() {
         const w = window.innerWidth;
         if (w < BREAKPOINT) {
-          // Móvil: mover listas a contenedores mobile (dentro del mismo leftSidebar)
           if (mobileLayersDiv && desktopLayersUl) {
             moveNodeToContainer(desktopLayersUl, mobileLayersDiv);
-            // Mostrar contenedor mobile y ocultar desktop
             mobileLayersDiv.classList.remove('d-none');
             if (desktopLayersContainer) desktopLayersContainer.classList.add('d-none');
           }
           if (mobileBaseDiv && desktopBaseUl) {
             moveNodeToContainer(desktopBaseUl, mobileBaseDiv);
-            // Mostrar contenedor mobile y ocultar desktop
             const mobileBaseContainer = document.getElementById('sidebar-base-mobile-container');
             if (mobileBaseContainer) mobileBaseContainer.classList.remove('d-none');
             if (desktopBaseContainer) desktopBaseContainer.classList.add('d-none');
           }
         } else {
-          // Escritorio: mover listas a contenedores desktop
+
           if (desktopLayersContainer && desktopLayersUl) {
             moveNodeToContainer(desktopLayersUl, desktopLayersContainer);
             // Mostrar contenedor desktop y ocultar mobile
@@ -471,7 +450,7 @@
         if (resizeTimer) clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
           adaptSidebarPlacement();
-          adjustSidebarsTop(); // reajustar top si cambió layout
+          adjustSidebarsTop();
         }, 120);
       }
 

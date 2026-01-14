@@ -45,7 +45,7 @@ const mineriaConfig = {
   estilo: {
     sonami_mapa_minero: {
       url: "sonami_mapa_minero.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       nombrePersonalizado: "Instalaciones Mediana y Gran Mineria",
       atributo: "Tipo Mineral",
       iconos: {
@@ -85,7 +85,6 @@ const mineriaConfig = {
         Descripcion: "Descripcion",
         "Origen del Dato": "Origen del Dato",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -94,7 +93,7 @@ const mineriaConfig = {
     },
     relaves_mineros_sernageomin: {
       url: "relaves_mineros_sernageomin.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "ESTADO_INS",
       nombrePersonalizado: "Relaves Mineros",
       iconos: {
@@ -138,7 +137,6 @@ const mineriaConfig = {
         "Origen Dato": "Origen del Dato",
         "Ultima Actualizacion Dato": "Ultima Actualizacion del Dato",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -147,7 +145,7 @@ const mineriaConfig = {
     },
     yacimientos: {
       url: "yacimientos.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "GRUPO_RECU",
       nombrePersonalizado: "Yacimientos Minerales",
       iconos: {
@@ -322,7 +320,7 @@ const mineriaConfig = {
     },
     plantas_desaladoras_puntos: {
       url: "plantas_desaladoras_puntos.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Sistema",
       nombrePersonalizado: "Plantas Desaladoras",
       iconos: {
@@ -361,7 +359,6 @@ const mineriaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -396,12 +393,10 @@ const mineriaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#008eecff", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#008eecff",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     red_ferroviaria: {
@@ -426,17 +421,15 @@ const mineriaConfig = {
         "Largo en Km": "Largo de la Via en Km",
         "Actividad en 2026": "¿Actividad en el 2026?",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#2d3436", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#2d3436",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     puertos: {
       url: "puertos.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "region",
       nombrePersonalizado: "Puertos",
       iconos: {
@@ -473,7 +466,6 @@ const mineriaConfig = {
         Nota: "Descripcion",
         "Origen Dato": "Origen de la Informacion",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -482,7 +474,7 @@ const mineriaConfig = {
     },
     distritos_mineros: {
       url: "distritos_mineros.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
+      type: "polygon",
       nombrePersonalizado: "Distritos Mineros",
       atributo: "Region",
       colores: {
@@ -502,12 +494,10 @@ const mineriaConfig = {
         "Creador Dato": "Creador del Dato",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#f31010ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#f31010ff",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     limite_comunal_linea: {
@@ -524,25 +514,21 @@ const mineriaConfig = {
         NOM_PROVIN: "Provincia",
         NOM_REGION: "Region",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#ff7f00", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#ff7f00",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     toponimia: {
       url: "toponimia.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Tipo",
       nombrePersonalizado: "Toponimia",
       iconos: {
-        // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
-        // Icono alternativo en caso que no encuentre el icono
         color: "#FF6B6B",
         fillColor: "#FF6B6B",
         radius: 4,
@@ -556,12 +542,12 @@ const mineriaConfig = {
       etiquetas: {
         campo: "Nombre",
         estilo: {
-          color: "#000000", // Color del texto
-          fontSize: "9px", // Tamaño de la fuente
-          fontFamily: "Arial, sans-serif", // Familia de la fuente
-          bufferColor: "#88304E", // Color del contorno
-          bufferWidth: 0.3, // Ancho del contorno
-          offsetY: -20, // Añadida propiedad para el offset vertical
+          color: "#000000",
+          fontSize: "9px",
+          fontFamily: "Arial, sans-serif",
+          bufferColor: "#88304E",
+          bufferWidth: 0.3,
+          offsetY: -20,
         },
       },
     },

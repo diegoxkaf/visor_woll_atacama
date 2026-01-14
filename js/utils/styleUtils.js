@@ -113,7 +113,7 @@ export function getEstiloCapa(feature, configCapa) {
       color: configCapa.estiloBase?.color || "#333",
       weight: configCapa.estiloBase?.weight || 1,
       opacity: configCapa.estiloBase?.opacity || 0.8,
-      interactive: true, // Asegurar que sea interactivo para popups
+      interactive: true,
     };
   }
 
@@ -300,7 +300,6 @@ export function applyGlobalPopupStyles() {
 
 /**
  * Añade etiquetas a una característica individual usando L.Tooltip.
- * Versión mejorada con soporte completo para estilos personalizados.
  *
  * @param {L.Layer} layer - La capa de Leaflet (marker, polygon, etc.).
  * @param {object} feature - La característica GeoJSON.

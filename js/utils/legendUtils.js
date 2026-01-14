@@ -201,17 +201,14 @@ function obtenerLabelConAlias(
   aliasLocal = {},
   aliasGlobal = {}
 ) {
-  // Prioridad 1: Alias local de la capa
   if (aliasLocal[valorOriginal]) {
     return aliasLocal[valorOriginal];
   }
 
-  // Prioridad 2: Alias global
   if (aliasGlobal[valorOriginal]) {
     return aliasGlobal[valorOriginal];
   }
 
-  // Prioridad 3: Valor original
   return valorOriginal;
 }
 
@@ -249,7 +246,6 @@ function crearItemLeyenda(color, label, iconFile = null) {
     // Manejo de error de carga de imagen
     icon.onerror = function () {
       log.warn(`No se pudo cargar el icono: ${iconFile}`);
-      // Reemplazar con un cuadrado de color si falla la imagen
       iconBox.innerHTML = "";
       iconBox.style.backgroundColor = "#ccc";
       iconBox.style.border = "1px solid #999";
@@ -290,7 +286,7 @@ function obtenerCapasVisibles(tema) {
 
   log.debug(`[obtenerCapasVisibles] Buscando capas para tema: ${tema}`);
 
-  // ESTRATEGIA 1: Buscar en el DOM por data-tema-padre
+  // Buscar en el DOM por data-tema-padre
   const checkboxesPorTema = document.querySelectorAll(
     `input[type="checkbox"][data-tema-padre="${tema}"]`
   );
@@ -317,7 +313,7 @@ function obtenerCapasVisibles(tema) {
     }
   });
 
-  // ESTRATEGIA 2: Si no encontró ninguno, buscar en la dimensión activa
+  // Si no encontró ninguno, buscar en la dimensión activa
   if (capasVisibles.size === 0) {
     log.debug(
       `[obtenerCapasVisibles] No se encontraron capas con ESTRATEGIA 1, usando ESTRATEGIA 2`
@@ -354,7 +350,7 @@ function obtenerCapasVisibles(tema) {
     }
   }
 
-  // ESTRATEGIA 3: Como último recurso, verificar en appState global
+  // Como último recurso, verificar en appState global
   if (capasVisibles.size === 0 && typeof window !== "undefined") {
     log.debug(
       `[obtenerCapasVisibles] No se encontraron capas con ESTRATEGIA 2, usando ESTRATEGIA 3`

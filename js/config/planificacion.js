@@ -95,12 +95,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#d1d1d1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#d1d1d1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     plan_regulador_intercomunal_costero_norte: {
@@ -155,12 +153,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#4B5945", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#4B5945",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     plan_regulador_intercomunal_costero_sur: {
@@ -215,12 +211,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#4B5945", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#4B5945",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_caldera: {
@@ -313,12 +307,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_chañaral: {
@@ -371,12 +363,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_chañaral_el_salado: {
@@ -431,12 +421,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_chañaral_flamenco: {
@@ -491,12 +479,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_chañaral_portofino: {
@@ -551,12 +537,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_copiapo: {
@@ -609,12 +593,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_diego_almagro: {
@@ -669,12 +651,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_freirina: {
@@ -724,12 +704,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_huasco: {
@@ -796,12 +774,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     prc_vallenar: {
@@ -850,12 +826,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     limites_urbanos: {
@@ -886,12 +860,10 @@ const planificacionConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#a1a1a1ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#a1a1a1ff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     limite_comunal_linea: {
@@ -908,12 +880,10 @@ const planificacionConfig = {
         NOM_PROVIN: "Provincia",
         NOM_REGION: "Region",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#2d3436", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#2d3436",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     toponimia: {
@@ -926,9 +896,9 @@ const planificacionConfig = {
       },
       estiloAlternativo: {
         color: "#FF6B6B",
-        fillColor: "#FF6B6B", // Color de relleno del punto
-        radius: 4, // Radio del punto
-        weight: 1, // Grosor del borde del punto
+        fillColor: "#FF6B6B",
+        radius: 4,
+        weight: 1,
         fillOpacity: 0.8,
       },
       popupCampos: ["Nombre"],
@@ -938,12 +908,12 @@ const planificacionConfig = {
       etiquetas: {
         campo: "Nombre",
         estilo: {
-          color: "#000000", // Color del texto
+          color: "#000000",
           fontSize: "9px",
-          fontFamily: "Arial, sans-serif", // Familia de la fuente
-          bufferColor: "#88304E", // Color del contorno
-          bufferWidth: 0.3, // Ancho del contorno
-          offsetY: -20, // Añadida propiedad para el offset vertical
+          fontFamily: "Arial, sans-serif",
+          bufferColor: "#88304E",
+          bufferWidth: 0.3,
+          offsetY: -20,
         },
       },
     },

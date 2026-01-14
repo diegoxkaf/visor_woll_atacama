@@ -149,7 +149,7 @@ const energiaConfig = {
     },
     subestaciones: {
       url: "subestaciones.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "SUBTIPO",
       nombrePersonalizado: "Subestaciones Elécticas",
       iconos: {
@@ -190,7 +190,7 @@ const energiaConfig = {
     },
     energia_plantas_eolicas: {
       url: "energia_plantas_eolicas.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "TIPO",
       nombrePersonalizado: "Plantas Eólicas",
       iconos: {
@@ -228,7 +228,7 @@ const energiaConfig = {
     },
     energia_plantas_solares: {
       url: "energia_plantas_solares.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "TIPO",
       nombrePersonalizado: "Plantas Solares",
       iconos: {
@@ -266,7 +266,7 @@ const energiaConfig = {
     },
     energia_termoelectricas: {
       url: "energia_termoelectricas.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "TIPO",
       nombrePersonalizado: "Plantas Termoelectricas",
       iconos: {
@@ -306,7 +306,7 @@ const energiaConfig = {
     },
     energia_hidroelectricas: {
       url: "energia_hidroelectricas.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "TIPO",
       nombrePersonalizado: "Plantas Hidroelectricas",
       iconos: {
@@ -348,7 +348,7 @@ const energiaConfig = {
     },
     energia_almacenamiento_combustibles: {
       url: "energia_almacenamiento_combustibles.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "HUSO",
       nombrePersonalizado: "Almacenamiento de Combustibles",
       iconos: {
@@ -390,7 +390,7 @@ const energiaConfig = {
     },
     energia_terminales_maritimos: {
       url: "energia_terminales_maritimos.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "HUSO",
       nombrePersonalizado: "Terminales Maritimos (Combustibles)",
       iconos: {
@@ -440,7 +440,7 @@ const energiaConfig = {
     },
     energia_potencial_fotovoltaico: {
       url: "energia_potencial_fotovoltaico.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
+      type: "polygon",
       atributo: "COMUNA",
       nombrePersonalizado: "Generacion Potencial Energia Fotovoltaica 2021",
       atributo: "REGION",
@@ -463,17 +463,15 @@ const energiaConfig = {
         "Origen Data": "Origen de la Informacion",
         "Link Informe": "Acceso al Informe",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#77957C", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#77957C",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     energia_potencial_solar_csp: {
       url: "energia_potencial_solar_csp.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
+      type: "polygon",
       atributo: "COMUNA",
       nombrePersonalizado: "Generacion Potencial Energia Solar CSP 2021",
       atributo: "REGION",
@@ -496,17 +494,15 @@ const energiaConfig = {
         "Origen Data": "Origen de la Informacion",
         "Link Informe": "Acceso al Informe",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#2B6CAF", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#2B6CAF",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     energia_potencial_eolico: {
       url: "energia_potencial_eolico.geojson",
-      type: "polygon", // Tipo de capa: point, line, polygon
+      type: "polygon",
       atributo: "COMUNA",
       nombrePersonalizado: "Generacion Potencial Energia Eolica 2021",
       atributo: "REGION",
@@ -529,17 +525,15 @@ const energiaConfig = {
         "Origen Data": "Origen de la Informacion",
         "Link Informe": "Acceso al Informe",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#F29200", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#F29200",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     energia_potencial_hidrobombeo: {
       url: "energia_potencial_hidrobombeo.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "REGION",
       nombrePersonalizado:
         "Generacion Potencial Energia Hidro Bombeo Agua de Mar 2021",
@@ -582,25 +576,21 @@ const energiaConfig = {
         NOM_PROVIN: "Provincia",
         NOM_REGION: "Region",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#2d3436", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#2d3436",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     toponimia: {
       url: "toponimia.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Tipo",
       nombrePersonalizado: "Toponimia",
       iconos: {
-        // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
-        // Icono alternativo en caso que no encuentre el icono
         color: "#FF6B6B",
         fillColor: "#FF6B6B",
         radius: 4,
@@ -614,12 +604,12 @@ const energiaConfig = {
       etiquetas: {
         campo: "Nombre",
         estilo: {
-          color: "#000000", // Color del texto
-          fontSize: "9px", // Tamaño de la fuente
-          fontFamily: "Arial, sans-serif", // Familia de la fuente
-          bufferColor: "#88304E", // Color del contorno
-          bufferWidth: 0.3, // Ancho del contorno
-          offsetY: -20, // Añadida propiedad para el offset vertical
+          color: "#000000",
+          fontSize: "9px",
+          fontFamily: "Arial, sans-serif",
+          bufferColor: "#88304E",
+          bufferWidth: 0.3,
+          offsetY: -20,
         },
       },
     },

@@ -242,7 +242,6 @@ function agruparCapasPorDimensionEn(contenedor, temasConfig) {
         grupoSwitch.id = grupoSwitchId;
         grupoSwitch.classList.add("form-check-input", "grupo-switch");
         grupoSwitch.checked = seCargaInicialmente; // Solo activo si está en cargaInicial
-        // NUEVO: Guardar referencia al tema y grupo
         grupoSwitch.setAttribute("data-tema", temaKey);
         grupoSwitch.setAttribute("data-grupo", grupoKey);
 
@@ -465,8 +464,6 @@ function agruparCapasPorDimensionEn(contenedor, temasConfig) {
 
         childrenContainer.classList.add("dimension-active", "show");
 
-        // ========== SOLUCIÓN: MARCAR CHECKBOXES DESPUÉS DE CARGAR ==========
-        // Esperar un momento para que el DOM se actualice
         await new Promise((resolve) => setTimeout(resolve, 100));
 
         // Marcar los checkboxes de las capas que se cargaron
@@ -478,7 +475,7 @@ function agruparCapasPorDimensionEn(contenedor, temasConfig) {
           }
         });
 
-        // NUEVO: Activar switches de grupos que tienen capas cargadas
+        // Activar switches de grupos que tienen capas cargadas
         if (temaConfig.grupos && gruposIniciales.length > 0) {
           gruposIniciales.forEach((grupoKey) => {
             const grupoSwitch = document.getElementById(
@@ -491,7 +488,7 @@ function agruparCapasPorDimensionEn(contenedor, temasConfig) {
           });
         }
 
-        // IMPORTANTE: Actualizar leyenda DESPUÉS de marcar los checkboxes
+        // Actualizar leyenda DESPUÉS de marcar los checkboxes
         actualizarLeyenda(temaKey, temasConfig);
       } else {
         const capas = obtenerTodasLasCapasDeDimension(temaConfig);
@@ -524,7 +521,7 @@ function agruparCapasPorDimensionEn(contenedor, temasConfig) {
             }
           });
 
-        // NUEVO: Sincronizar switches de grupos
+        // Sincronizar switches de grupos
         if (temaConfig.grupos) {
           Object.entries(temaConfig.grupos).forEach(([grupoKey, grupoConfig]) => {
             const grupoSwitch = document.getElementById(
@@ -671,7 +668,6 @@ export async function activarCapasDeDimension(
     } catch (error) {
       // Log del error pero continuar con las demás capas
       log.warn(`No se pudo cargar la capa ${capaNombre}, continuando con las demás...`);
-      // No re-lanzar el error para que continúe con las otras capas
     }
   }
 
@@ -851,7 +847,6 @@ export function sincronizarEstadoCapas(temaActivo, temasConfig) {
       mobileCheckbox.checked = debeEstarMarcado;
     }
 
-    // MODIFICACIÓN: Eliminar estilos especiales para capas activas
     const mainLabel = document.querySelector(`label[for="capa-${capaNombre}"]`);
     const mobileLabel = document.querySelector(
       `label[for="capa-mobile-${capaNombre}"]`
@@ -862,9 +857,9 @@ export function sincronizarEstadoCapas(temaActivo, temasConfig) {
         // Todas las capas tienen el mismo estilo, sin importar si son del tema activo
         label.classList.remove("text-muted");
         label.classList.remove("fw-bold");
-        label.style.color = ""; // Color por defecto
+        label.style.color = "";
         label.style.fontStyle = "normal";
-        label.style.fontWeight = ""; // Peso por defecto
+        label.style.fontWeight = "";
       }
     });
   });
@@ -890,7 +885,7 @@ export function activarDimension(temaKey) {
   const switchDesktop = document.getElementById(`dimension-switch-${temaKey}-sidebar-layers`);
   if (switchDesktop) {
     if (!switchDesktop.checked) {
-      switchDesktop.click(); // Usar click() para disparar el evento 'change' y toda la lógica asociada
+      switchDesktop.click();
     }
     return;
   }

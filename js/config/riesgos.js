@@ -37,7 +37,7 @@ const riesgosConfig = {
   estilo: {
     volcanes_activos: {
       url: "volcanes_activos.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Categoría",
       nombrePersonalizado: "Volcanes Activos",
       iconos: {
@@ -79,7 +79,7 @@ const riesgosConfig = {
     },
     grandes_terremotos: {
       url: "grandes_terremotos.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Categoría",
       nombrePersonalizado: "Grandes Sismos",
       iconos: {
@@ -115,7 +115,7 @@ const riesgosConfig = {
     },
     incendios_forestales: {
       url: "incendios_forestales.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "codreg",
       nombrePersonalizado: "Incendios Forestales 2015 - 2024",
       iconos: {
@@ -169,7 +169,7 @@ const riesgosConfig = {
     },
     puntos_criticos_invierno_2024: {
       url: "puntos_criticos_invierno_2024.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "region",
       nombrePersonalizado: "Puntos Criticos Invierno 2024",
       iconos: {
@@ -206,7 +206,7 @@ const riesgosConfig = {
     },
     remociones_masa: {
       url: "remociones_masa.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Región",
       nombrePersonalizado: "Remociones en Masa",
       iconos: {
@@ -266,25 +266,21 @@ const riesgosConfig = {
         NOM_PROVIN: "Provincia",
         NOM_REGION: "Region",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#2d3436", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#2d3436",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     toponimia: {
       url: "toponimia.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Tipo",
       nombrePersonalizado: "Toponimia",
       iconos: {
-        // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
-        // Icono alternativo en caso que no encuentre el icono
         color: "#FF6B6B",
         fillColor: "#FF6B6B",
         radius: 4,
@@ -298,12 +294,12 @@ const riesgosConfig = {
       etiquetas: {
         campo: "Nombre",
         estilo: {
-          color: "#000000", // Color del texto
-          fontSize: "9px", // Tamaño de la fuente
-          fontFamily: "Arial, sans-serif", // Familia de la fuente
-          bufferColor: "#88304E", // Color del contorno
-          bufferWidth: 0.3, // Ancho del contorno
-          offsetY: -20, // Añadida propiedad para el offset vertical
+          color: "#000000",
+          fontSize: "9px",
+          fontFamily: "Arial, sans-serif",
+          bufferColor: "#88304E",
+          bufferWidth: 0.3,
+          offsetY: -20,
         },
       },
     },

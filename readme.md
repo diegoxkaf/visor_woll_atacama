@@ -1,132 +1,280 @@
-# Visor Territorial Atacama Andes Value - Documentación Técnica Superior
+# Visor Territorial Atacama Andes Value
 
-## 🚀 Descripción General
+> Plataforma SIG (Sistema de Información Geográfica) para la gestión y visualización de datos estratégicos en la Región de Atacama, potenciada con Inteligencia Artificial.
 
-El **Visor Territorial Atacama Andes Value** es una plataforma SIG (Sistema de Información Geográfica) diseñada para la gestión y visualización de datos estratégicos en la Región de Atacama. La plataforma integra visualización geoespacial con una capa de inteligencia artificial para democratizar el acceso al análisis de datos territoriales.
-
----
-
-## 🏗️ Arquitectura del Sistema
-
-La aplicación sigue un patrón de **Arquitectura Modular de Capas** desacopladas.
-
-### 🧩 Capas de la Aplicación
-
-1.  **Capa de Presentación (UI/UX):**
-    *   Interfaz basada en **Leaflet.js** y **Vanilla CSS/JS**.
-    *   Dashboard dual con Sidebars dinámicos para control de capas y resultados de búsqueda.
-    *   Adaptabilidad total (Responsive Design) para dispositivos móviles y estaciones de trabajo.
-
-2.  **Capa de Lógica de Negocio (Utils):**
-    *   `layerUtils.js`: Motor de gestión de ciclos de vida de capas (GeoJSON/WMS).
-    *   `searchControl.js`: Motor de búsqueda semántica y espacial con indexación local.
-    *   `themeUtils.js`: Gestor de dimensiones temáticas y estados visuales.
-
-3.  **Capa de Inteligencia Artificial (AI Agent):**
-    *   **Backend**: Funciones Serverless en Vercel (`api/chat.js`).
-    *   **LLM**: Integración con modelos de lenguaje masivos vía **Groq**.
-    *   **Context Aware**: Sistema de indexación geográfica que permite a la IA entender la topología del territorio.
-
-4.  **Capa de Datos y Estado:**
-    *   **Single Source of Truth**: Gestión de estado centralizada en `appState.js`.
-    *   **Data Lake Local**: Repositorio de GeoJSONs optimizados.
-    *   **Web Workers**: Procesamiento de datos pesados fuera del hilo principal.
+![Version](https://img.shields.io/badge/version-3.0-blue.svg)
+![License](https://img.shields.io/badge/license-Proprietary-red.svg)
 
 ---
 
-## 📂 Guía de Archivos y Directorios
+## 🎯 ¿Qué es este proyecto?
 
-### 📄 JavaScript (`/js`)
+El Visor Territorial es una aplicación web interactiva que permite visualizar y analizar datos geoespaciales de la Región de Atacama. Integra mapas dinámicos con un asistente de IA para democratizar el acceso al análisis territorial.
 
-#### `js/config/` (Configuración Dinámica)
-*   **`allTemasConfig.js`**: Centraliza todas las dimensiones. Es el punto de unión.
-*   **`agua.js`, `mineria.js`, etc.**: Archivos específicos por dimensión. Contienen la definición de capas, grupos y estilos.
-*   **`capasBase.js`**: Configuración de los mapas base (OpenStreetMap, Satélite, etc.).
-*   **`constants.js`**: Valores globales como coordenadas iniciales, niveles de zoom y selectores DOM.
-*   **`leyendaAliases.js`**: Diccionario para traducir nombres técnicos a nombres legibles en la leyenda.
+### Características principales
 
-#### `js/utils/` (Motores Lógicos)
-*   **`layerUtils.js`**: Carga, visualización y filtrado de capas GeoJSON y WMS.
-*   **`sidebarUtils.js`**: Gestión de la interfaz de usuario de los paneles laterales.
-*   **`searchControl.js`**: Motor de búsqueda interna que indexa las propiedades de las capas.
-*   **`styleUtils.js`**: Define cómo se ven los puntos, líneas y polígonos.
-*   **`popupUtils.js`**: Gestiona el formato y contenido de las burbujas de información.
-*   **`errorHandler.js`**: Captura errores para evitar que la aplicación se detenga.
-*   **`logger.js`**: Registra eventos en la consola para depuración profesional.
-
-### 🎨 Estilos (`/css`)
-*   **`base.css`**: Define la paleta de colores corporativa (vía variables CSS), tipografía y el layout estructural.
-*   **`components.css`**: Estilos específicos para botones, formularios, paneles laterales y popups.
-*   **`mobile.css`**: Ajustes específicos para que la experiencia sea fluida en teléfonos y tablets.
-
-### 🖼️ Activos (`/assets`)
-*   **`/icons`**: Aloja los archivos `.png` o `.svg` usados para los marcadores en el mapa.
-*   **`/img`**: Logotipos y recursos visuales de la interfaz.
+- 🗺️ **Visualización geoespacial** interactiva basada en Leaflet.js
+- 🤖 **Asistente IA** context-aware para consultas territoriales
+- 📊 **Múltiples capas de datos** (minería, agua, agricultura, energía)
+- 🔍 **Búsqueda semántica** de elementos geográficos
+- 📱 **Diseño responsive** para móviles y desktop
+- ⚡ **Optimizado** con Web Workers para alto rendimiento
 
 ---
 
-## ⚙️ Manual de Configuración de Capas
+## 🖼️ Demo
 
-Para agregar o modificar una capa, debe editar el archivo correspondiente en `js/config/`.
+![alt text](image.png)
 
-### Estructura de una Capa:
+**Demo en vivo:** [https://visorwoll-atacama.vercel.app]
+
+---
+
+## 📋 Requisitos Previos
+
+- Node.js >= 16.x (solo para desarrollo local con servidor estático)
+- Navegador moderno (Chrome, Firefox, Safari, Edge)
+- Cuenta en Vercel (para despliegue)
+- API Key de Groq (para funcionalidad de IA)
+
+---
+
+## 🚀 Inicio Rápido
+
+### 1. Clona el repositorio
+
+```bash
+git clone https://github.com/atacama-andes-value/visor-territorial.git
+cd visor-territorial
+```
+
+### 2. Configura las variables de entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```bash
+GROQ_API_KEY=tu_api_key_aqui
+```
+
+### 3. Ejecuta localmente
+
+**Opción A - Con servidor estático simple:**
+```bash
+npx http-server -p 8080
+```
+
+**Opción B - Con Python:**
+```bash
+python -m http.server 8080
+```
+
+**Opción C - Con PHP:**
+```bash
+php -S localhost:8080
+```
+
+### 4. Abre en tu navegador
+
+```
+http://localhost:8080
+```
+
+---
+
+## 🛠️ Tecnologías
+
+### Frontend
+- **Mapa:** Leaflet.js 1.9+
+- **UI:** Vanilla JavaScript (ES6+)
+- **Estilos:** CSS3 con variables personalizadas
+- **Procesamiento:** Web Workers
+
+### Backend/API
+- **Serverless:** Vercel Functions
+- **IA:** Groq API (LLM)
+- **Runtime:** Node.js
+
+### Datos
+- **Formato:** GeoJSON
+- **Servicios:** WMS (Web Map Service)
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+visor-territorial/
+├── index.html              # Punto de entrada
+├── api/
+│   └── chat.js            # Endpoint serverless para IA
+├── css/
+│   ├── base.css           # Estilos base y variables
+│   ├── components.css     # Componentes UI
+│   └── mobile.css         # Adaptaciones móviles
+├── js/
+│   ├── config/            # Configuraciones de capas por dimensión
+│   ├── utils/             # Utilidades y motores lógicos
+│   └── store/             # Gestión de estado
+├── geojson/               # Archivos de datos geográficos
+├── assets/                # Iconos e imágenes
+└── docs/                  # Documentación extendida
+```
+
+---
+
+## 📖 Documentación
+
+- **[Guía de Desarrollo](docs/DEVELOPMENT.md)** - Cómo contribuir y desarrollar
+- **[Arquitectura del Sistema](docs/ARCHITECTURE.md)** - Diseño técnico detallado
+- **[Configuración de Capas](docs/CONFIGURATION.md)** - Cómo agregar/modificar capas
+- **[API Reference](docs/API.md)** - Documentación de endpoints
+
+---
+
+## 🔧 Configuración Básica
+
+### Agregar una nueva capa GeoJSON
+
+1. Coloca tu archivo `.geojson` en `/geojson/`
+2. Edita el archivo de configuración correspondiente en `/js/config/`
+3. Reinicia el servidor
+
+**Ejemplo mínimo:**
+
 ```javascript
-nombre_capa: {
-  url: "archivo.geojson",          // Nombre del archivo en la carpeta /geojson
-  type: "point",                  // point, line o polygon
-  atributo: "NOMBRE_REGION",       // Atributo base para el filtrado/colores
-  nombrePersonalizado: "Mi Capa",  // Título que verá el usuario
-  iconos: {                       // Solo para puntos
-    "ValorAtributo": "icono.png"
-  },
-  colores: {                      // Solo para polígonos/líneas
-    "ValorAtributo": "#HEXCODE"
-  },
-  estiloBase: {                   // Propiedades visuales fijas
-    weight: 2,
-    color: "#000",
-    fillOpacity: 0.5
-  },
-  popupCampos: ["NOMBRE", "ESTADO"], // Campos a mostrar en el popup
-  alias: {                        // Traducción de los campos del popup
-    "NOMBRE": "Nombre de la Unidad",
-    "ESTADO": "Situación Actual"
-  },
-  etiquetas: {                    // Configuración de texto sobre el mapa
-    campo: "NOMBRE",
-    estilo: { color: "#fff", fontSize: "10px" }
-  }
+nueva_capa: {
+  url: "mi_capa.geojson",
+  type: "point",
+  nombrePersonalizado: "Mi Nueva Capa",
+  popupCampos: ["nombre", "descripcion"]
 }
 ```
 
+Ver [CONFIGURATION.md](docs/CONFIGURATION.md) para opciones avanzadas.
+
 ---
 
-## 🛠️ Guía de Desarrollo
+## 🚢 Despliegue en Vercel
 
-### Gestión del Estado
-Nunca modifique el DOM directamente para estados globales. Use `appState.js`:
-```javascript
-import { appState } from './store/appState.js';
+### Despliegue automático
+
+1. **Conecta tu repositorio:**
+   - Ve a [vercel.com](https://vercel.com)
+   - Importa el repositorio desde GitHub
+
+2. **Configura variables de entorno:**
+   ```
+   GROQ_API_KEY = tu_clave_aqui
+   ```
+
+3. **Despliega:**
+   - Vercel detectará automáticamente la configuración
+   - El despliegue se ejecutará en cada push a `main`
+
+### Despliegue manual
+
+```bash
+npm install -g vercel
+vercel --prod
 ```
 
-### Agregar nuevas dimensiones
-1. Cree un nuevo archivo `.js` en `js/config/`.
-2. Impórtelo en `allTemasConfig.js`.
-3. Agréguelo al objeto `allTemasConfig`.
+---
+
+## 🤝 Contribuir
+
+Este es un proyecto privado de Atacama Andes Value. Si eres parte del equipo:
+
+1. Crea una rama desde `develop`
+2. Realiza tus cambios
+3. Abre un Pull Request hacia `develop`
+
+### Convenciones de commits
+
+```
+feat: Nueva funcionalidad
+fix: Corrección de bug
+docs: Cambios en documentación
+style: Cambios de formato (no afectan funcionalidad)
+refactor: Refactorización de código
+perf: Mejoras de rendimiento
+test: Agregar o modificar tests
+```
 
 ---
 
-## 🚢 Despliegue (Vercel)
+## 🧪 Testing
 
-El proyecto está optimizado para **Vercel**:
-1. Conecte su cuenta de GitHub.
-2. Configure la variable de entorno `GROQ_API_KEY`.
-3. El despliegue se realizará automáticamente.
+```bash
+# Ejecutar tests (cuando estén implementados)
+npm test
+
+# Validar estructura de GeoJSON
+npm run validate-geojson
+```
 
 ---
 
-## 📜 Licencia y Propiedad
-Proyecto desarrollado para **Atacama Andes Value**.
+## 📊 Dimensiones Disponibles
 
-**Versión**: 3.0 
-**Última Revisión**: Enero 2026
+| Dimensión | Capas | Estado |
+|-----------|-------|--------|
+| 💧 Agua | 12 capas | ✅ Activo |
+| ⛏️ Minería | 8 capas | ✅ Activo |
+| 🌾 Agricultura | 15 capas | ✅ Activo |
+| ⚡ Energía | 6 capas | ✅ Activo |
+| 🏛️ Patrimonio | 9 capas | ✅ Activo |
+
+---
+
+## ⚠️ Troubleshooting
+
+### El mapa no carga
+
+1. Verifica la consola del navegador (F12)
+2. Asegúrate de tener conexión a Internet
+3. Revisa que los archivos GeoJSON estén en `/geojson/`
+
+### La IA no responde
+
+1. Verifica que `GROQ_API_KEY` esté configurada
+2. Revisa los logs en Vercel Dashboard
+3. Comprueba límites de cuota de la API
+
+### Errores de CORS
+
+Asegúrate de estar ejecutando un servidor HTTP, no abriendo el archivo directamente (`file://`).
+
+---
+
+## 📄 Licencia
+
+**Propiedad de Atacama Andes Value**  
+Todos los derechos reservados © 2026
+
+---
+
+## 👥 Equipo
+
+**Desarrollador Principal:** [Diego Velàsquez]  
+**Cliente:** Atacama Andes Value  
+**Contacto:** [diegovelasquezf@gmail.com]
+
+---
+
+## 📝 Changelog
+
+### v3.0 (Enero 2026)
+- Refactorización completa de la arquitectura
+- Integración de IA con Groq
+- Sistema de búsqueda semántica
+- Mejoras de rendimiento con Web Workers
+
+### v2.x
+- [Ver changelog completo](CHANGELOG.md)
+
+---
+
+**Versión:** 3.0  
+**Última Revisión:** Enero 2026
+
+

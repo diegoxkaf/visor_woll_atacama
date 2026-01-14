@@ -8,7 +8,7 @@ const wmsConfig = {
       version: "1.3.0",
       attribution: "IDE CHILE",
       nombre: "Destinos Turisticos 2024",
-      info_format: "application/json", // formato preferido para GetFeatureInfo
+      info_format: "application/json",
       opacity: 0.8,
       popupCampos: ["NOMBRE", "TIPO", "REGION"],
       alias: { NOMBRE: "Nombre", TIPO: "Tipo", REGION: "Región" },
@@ -22,7 +22,7 @@ const wmsConfig = {
       version: "1.3.0",
       attribution: "CIREN / IDEMINAGRI",
       nombre: "Agroindustrias Atacama",
-      info_format: "text/html", // formato preferido para GetFeatureInfo
+      info_format: "text/html",
       opacity: 0.8,
       tiled: true,
     },

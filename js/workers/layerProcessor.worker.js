@@ -87,7 +87,6 @@ self.onmessage = async function (e) {
 
             let data = await response.json();
 
-            // Procesamiento pesado: transformación de coordenadas
             const processedData = transformCoordinates(data);
 
             self.postMessage({

@@ -1,15 +1,4 @@
-/**
- * Control de búsqueda optimizado - FASE 1
- * Mejoras implementadas:
- * - Debouncing en input (300ms)
- * - Límite de resultados renderizados (20)
- * - Límite de markers en mapa (50)
- * - Caché de búsquedas recientes (20 queries)
- * - Indexación prioritaria de capas críticas
- * - Eliminación de JSON.stringify en comparaciones
- * 
- * @module utils/searchControl
- */
+
 
 import { appState, isLayerLoaded, getLayer } from "../store/appState.js";
 import { logger } from "./logger.js";
@@ -17,9 +6,7 @@ import allTemasConfig from "../config/allTemasConfig.js";
 import { fetchLayerData, cargarCapaIndividual } from "./layerUtils.js";
 import { activarDimension } from "./sidebarUtils.js";
 
-// ============================================================================
 // CONFIGURACIÓN Y CONSTANTES
-// ============================================================================
 
 const CONFIG = {
     MAX_VISIBLE_RESULTS: 20,        // Máximo de resultados en lista
@@ -29,70 +16,54 @@ const CONFIG = {
     BACKGROUND_BATCH_SIZE: 2,       // Capas a indexar por lote
     BACKGROUND_DELAY: 200,          // ms entre lotes
 
-    // Capas prioritarias (se indexan primero)
     PRIORITY_LAYERS: [
-        // Agua (crítica)
         'hidrografia', 'derechos_agua_2025', 'cuencas_dga', 'glaciares',
-        // Minería (crítica)
         'yacimientos_mineros', 'relaves', 'distritos_mineros',
-        // Energía (crítica)
         'energia_linea_transmision', 'subestaciones',
-        // Agricultura (crítica)
         'agricultura_regiones', 'uso_suelo'
     ]
 };
 
-// ============================================================================
 // ESTADO DEL MÓDULO
-// ============================================================================
 
 let searchIndex = [];
 let indexedLayers = new Set();
 let isIndexing = false;
 
-// Caché de búsquedas
 const searchCache = new Map();
 
-// Timers
 let searchDebounceTimer = null;
 
-// Filtros
 let searchFilters = {
     capaTipo: 'todos',
     soloVisibles: false
 };
 
-// Resultados actuales
 let resultsMarkersGroup = null;
 let currentResults = [];
 let currentResultIndex = 0;
 
-// ============================================================================
 // UTILIDADES DE CACHÉ
-// ============================================================================
 
-/**
- * Genera clave única para el caché de búsqueda
- */
+// Genera clave única para el caché de búsqueda
+
 function getCacheKey(query, filters) {
     return `${query.toLowerCase()}_${filters.capaTipo}_${filters.soloVisibles}`;
 }
 
-/**
- * Obtiene resultado del caché si existe
- */
+
+// Obtiene resultado del caché si existe
+
 function getCachedResults(query) {
     const key = getCacheKey(query, searchFilters);
     return searchCache.get(key);
 }
 
-/**
- * Guarda resultado en caché (LRU)
- */
+
+// Guarda resultado en caché (LRU)
+
 function setCachedResults(query, results) {
     const key = getCacheKey(query, searchFilters);
-
-    // Implementar LRU: si excede tamaño, eliminar el más antiguo
     if (searchCache.size >= CONFIG.CACHE_SIZE) {
         const firstKey = searchCache.keys().next().value;
         searchCache.delete(firstKey);
@@ -101,17 +72,14 @@ function setCachedResults(query, results) {
     searchCache.set(key, results);
 }
 
-/**
- * Limpia el caché de búsqueda
- */
+// Limpia el caché de búsqueda
+
 export function clearSearchCache() {
     searchCache.clear();
     logger.debug('[SearchControl] Caché de búsqueda limpiado');
 }
 
-// ============================================================================
 // GESTIÓN DE MARKERS
-// ============================================================================
 
 function initResultsMarkersGroup() {
     if (resultsMarkersGroup) {
@@ -130,9 +98,7 @@ export function clearResultsMarkers() {
     currentResultIndex = 0;
 }
 
-// ============================================================================
 // UTILIDADES DE CONFIGURACIÓN
-// ============================================================================
 
 function getCapaConfig(capaName, temaName) {
     if (!capaName) return null;
@@ -196,17 +162,11 @@ function getCapaTipo(capaName) {
     return 'otros';
 }
 
-// ============================================================================
-// CONSTRUCCIÓN DE ÍNDICE - OPTIMIZADO
-// ============================================================================
+// CONSTRUCCIÓN DE ÍNDICE
 
-/**
- * Construye campos buscables de forma optimizada
- */
 function buildSearchableFields(props, capaConfig) {
     const searchableFields = {};
 
-    // Usar alias si existen
     if (capaConfig?.alias) {
         for (const [key, aliasValue] of Object.entries(capaConfig.alias)) {
             const propValue = props[key];
@@ -217,7 +177,6 @@ function buildSearchableFields(props, capaConfig) {
         }
     }
 
-    // Campos comunes
     const camposComunes = [
         'NOMBRE', 'nombre', 'Name', 'name', 'NOM_COMUNA', 'nom_comuna',
         'TIPO', 'tipo', 'Type', 'type', 'TIPO_PLANTA',
@@ -238,22 +197,17 @@ function buildSearchableFields(props, capaConfig) {
     return searchableFields;
 }
 
-/**
- * Construye el índice de búsqueda - OPTIMIZADO
- */
+
+// Construye el índice de búsqueda
+
 export async function buildSearchIndex() {
     if (isIndexing) return;
     isIndexing = true;
 
     logger.log('[SearchControl] Iniciando construcción de índice optimizado');
 
-    // 1. Indexar metadata de TODAS las capas (rápido)
     indexAllLayersMetadata();
-
-    // 2. Indexar features de capas YA CARGADAS (rápido)
     indexLoadedLayers();
-
-    // 3. Indexar capas prioritarias en background
     setTimeout(() => {
         indexPriorityLayersBackground();
     }, 2000);
@@ -261,9 +215,9 @@ export async function buildSearchIndex() {
     isIndexing = false;
 }
 
-/**
- * Indexa solo metadata de capas (instantáneo)
- */
+
+// Indexa solo metadata de capas
+
 function indexAllLayersMetadata() {
     for (const [temaKey, temaConfig] of Object.entries(allTemasConfig)) {
         if (!temaConfig.estilo) continue;
@@ -272,7 +226,6 @@ function indexAllLayersMetadata() {
             const nombrePersonalizado = config.nombrePersonalizado || capaName;
             const metadataId = `meta_${capaName}`;
 
-            // Evitar duplicados
             if (searchIndex.some(i => i.id === metadataId)) continue;
 
             searchIndex.push({
@@ -298,9 +251,9 @@ function indexAllLayersMetadata() {
     logger.log(`[SearchControl] Metadata indexada: ${searchIndex.length} capas`);
 }
 
-/**
- * Indexa capas ya cargadas en el mapa
- */
+
+// Indexa capas ya cargadas en el mapa
+
 function indexLoadedLayers() {
     if (!appState.map) return;
 
@@ -319,21 +272,17 @@ function indexLoadedLayers() {
     logger.log(`[SearchControl] Features indexados de capas cargadas: ${featuresIndexed}`);
 }
 
-/**
- * Indexa capas prioritarias en background
- * OPTIMIZACIÓN: Solo capa críticas primero
- */
+// Indexa capas prioritarias en background
+
 async function indexPriorityLayersBackground() {
     logger.log('[SearchControl] Iniciando indexación prioritaria en background');
 
     const capasAIndexar = [];
 
-    // Recolectar solo capas prioritarias NO cargadas
     for (const [temaKey, temaConfig] of Object.entries(allTemasConfig)) {
         if (!temaConfig.estilo) continue;
 
         for (const [capaName, config] of Object.entries(temaConfig.estilo)) {
-            // Solo si es prioritaria, no está cargada, y no es WMS
             if (
                 CONFIG.PRIORITY_LAYERS.includes(capaName) &&
                 !isLayerLoaded(capaName) &&
@@ -347,7 +296,6 @@ async function indexPriorityLayersBackground() {
 
     logger.log(`[SearchControl] ${capasAIndexar.length} capas prioritarias para indexar`);
 
-    // Procesar en lotes pequeños
     for (let i = 0; i < capasAIndexar.length; i += CONFIG.BACKGROUND_BATCH_SIZE) {
         const lote = capasAIndexar.slice(i, i + CONFIG.BACKGROUND_BATCH_SIZE);
 
@@ -366,7 +314,6 @@ async function indexPriorityLayersBackground() {
                     indexedLayers.add(item.capaName);
                 }
             } catch (err) {
-                // Silencioso para no molestar al usuario
             }
         }));
 
@@ -376,9 +323,8 @@ async function indexPriorityLayersBackground() {
     logger.log(`[SearchControl] Indexación prioritaria completada. Total: ${searchIndex.length}`);
 }
 
-/**
- * Agrega un feature al índice - OPTIMIZADO
- */
+// Agrega un feature al índice
+
 function addToIndex(feature, capaName, layerInstance = null, temaKey = null) {
     const props = feature.properties;
     if (!props) return;
@@ -399,8 +345,6 @@ function addToIndex(feature, capaName, layerInstance = null, temaKey = null) {
         .replace(/[\u0300-\u036f]/g, "");
 
     if (!searchText.trim()) return;
-
-    // Calcular centro/bounds de forma más eficiente
     let center = null;
     let bounds = null;
 
@@ -414,8 +358,6 @@ function addToIndex(feature, capaName, layerInstance = null, temaKey = null) {
             center = bounds.getCenter();
         } catch (e) { /* ignore */ }
     }
-
-    // Display name optimizado
     let displayName = nombreCapa;
     const nombreFields = ['NOMBRE', 'nombre', 'Name', 'name', 'NOM_COMUNA', 'Nombre', 'sector', 'Sector'];
 
@@ -426,7 +368,6 @@ function addToIndex(feature, capaName, layerInstance = null, temaKey = null) {
         }
     }
 
-    // Crear entrada de índice compacta
     searchIndex.push({
         layer: layerInstance,
         feature: feature,
@@ -445,9 +386,7 @@ function addToIndex(feature, capaName, layerInstance = null, temaKey = null) {
     });
 }
 
-// ============================================================================
-// BÚSQUEDA - OPTIMIZADO
-// ============================================================================
+// BÚSQUEDA
 
 function parseQuery(query) {
     const operators = {
@@ -481,13 +420,12 @@ function parseQuery(query) {
     return operators;
 }
 
-/**
- * Búsqueda global - OPTIMIZADO con caché
- */
+
+// Búsqueda global
+
 export function search(query) {
     if (!query || query.length < 2) return [];
 
-    // Verificar caché primero
     const cached = getCachedResults(query);
     if (cached) {
         logger.debug('[SearchControl] Resultado desde caché');
@@ -497,17 +435,14 @@ export function search(query) {
     const ops = parseQuery(query);
     let results = searchIndex;
 
-    // Filtro Categoría
     if (searchFilters.capaTipo !== 'todos') {
         results = results.filter(item => item.tipoCategoria === searchFilters.capaTipo);
     }
 
-    // Filtro Solo Visibles
     if (searchFilters.soloVisibles) {
         results = results.filter(item => isLayerLoaded(item.capaName));
     }
 
-    // Filtro Capa
     if (ops.capa) {
         const capaQuery = ops.capa.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         results = results.filter(item => {
@@ -517,7 +452,6 @@ export function search(query) {
         });
     }
 
-    // Filtros de campos
     const commonFields = ['tipo', 'comuna', 'region', 'provincia', 'cuenca'];
     for (const field of commonFields) {
         if (ops[field]) {
@@ -529,12 +463,10 @@ export function search(query) {
         }
     }
 
-    // Texto libre
     if (ops.textoCompleto) {
         results = results.filter(item => item.searchText.includes(ops.textoCompleto));
     }
 
-    // Ordenamiento: Metadata > Capas cargadas > Resto
     results.sort((a, b) => {
         if (a.isMetadata && !b.isMetadata) return -1;
         if (!a.isMetadata && b.isMetadata) return 1;
@@ -545,29 +477,22 @@ export function search(query) {
         return 0;
     });
 
-    // Limitar resultados
     const limitedResults = results.slice(0, 50);
 
-    // Guardar en caché
     setCachedResults(query, limitedResults);
 
     return limitedResults;
 }
 
-// ============================================================================
 // NAVEGACIÓN Y VISUALIZACIÓN
-// ============================================================================
 
 export async function zoomToResult(result, map, showPopup = true) {
     if (!result || !map) return;
-
-    // Caso 1: Metadata de capa
     if (result.isMetadata) {
         await activarCapaYDimension(result.capaName, result.tema);
         return;
     }
 
-    // Caso 2: Feature
     let layerInstance = result.layer;
 
     if (!isLayerLoaded(result.capaName)) {
@@ -575,25 +500,20 @@ export async function zoomToResult(result, map, showPopup = true) {
         await activarCapaYDimension(result.capaName, result.tema);
         layerInstance = getLayer(result.capaName);
     }
-
-    // Zoom a bounds o center
     if (result.bounds) {
         map.fitBounds(result.bounds, { maxZoom: 16, padding: [50, 50] });
     } else if (result.center) {
         map.setView(result.center, 16);
     }
 
-    // Abrir popup
     if (showPopup && layerInstance) {
         if (layerInstance.eachLayer) {
             let found = null;
             layerInstance.eachLayer(l => {
                 if (!found && l.feature?.properties) {
-                    // Comparación más eficiente usando un campo único
                     const propsA = l.feature.properties;
                     const propsB = result.properties;
 
-                    // Intentar comparar por ID o nombre primero
                     if (propsA.OBJECTID === propsB.OBJECTID ||
                         propsA.id === propsB.id ||
                         propsA.NOMBRE === propsB.NOMBRE) {
@@ -612,7 +532,6 @@ export async function zoomToResult(result, map, showPopup = true) {
 }
 
 async function activarCapaYDimension(capaName, temaName) {
-    // Activar dimensión si es diferente
     if (appState.activeTemaName !== temaName) {
         activarDimension(temaName);
 
@@ -623,7 +542,6 @@ async function activarCapaYDimension(capaName, temaName) {
         }
     }
 
-    // Activar capa si no está cargada
     if (!isLayerLoaded(capaName)) {
         let checkbox = null;
         let waitCheckbox = 0;
@@ -649,9 +567,9 @@ async function activarCapaYDimension(capaName, temaName) {
     }
 }
 
-/**
- * Muestra resultados en mapa - OPTIMIZADO con límite
- */
+
+// Muestra resultados en mapa
+
 export function showAllResultsOnMap(results) {
     initResultsMarkersGroup();
     currentResults = results;
@@ -662,7 +580,6 @@ export function showAllResultsOnMap(results) {
     const bounds = L.latLngBounds();
     let hasBounds = false;
 
-    // LÍMITE DE MARKERS para no saturar el mapa
     const limitedResults = results.slice(0, CONFIG.MAX_MARKERS_ON_MAP);
 
     limitedResults.forEach((item) => {
@@ -722,9 +639,7 @@ export function navigateResults(direction) {
     zoomToResult(result, appState.map, true);
 }
 
-// ============================================================================
 // UI - CONTROL DE BÚSQUEDA
-// ============================================================================
 
 export function createSearchControl() {
     initResultsMarkersGroup();
@@ -816,7 +731,6 @@ export function createSearchControl() {
             L.DomEvent.disableClickPropagation(container);
             L.DomEvent.disableScrollPropagation(container);
 
-            // Setup elements
             const toggleBtn = container.querySelector('#searchToggleBtn');
             const toggleBtnHeader = container.querySelector('#searchToggleBtnHeader');
             const closeBtn = container.querySelector('#searchCloseBtn');
@@ -829,10 +743,6 @@ export function createSearchControl() {
             const filterSelect = container.querySelector('#searchFilterTipo');
             const navCounter = container.querySelector('#searchNavCounter');
 
-            // ============================================================================
-            // TOGGLE FUNCTIONALITY
-            // ============================================================================
-
             toggleBtn.addEventListener('click', () => {
                 searchContainer.style.display = 'block';
                 toggleBtn.style.display = 'none';
@@ -842,7 +752,6 @@ export function createSearchControl() {
             closeBtn.addEventListener('click', () => {
                 searchContainer.style.display = 'none';
                 toggleBtn.style.display = 'flex';
-                // Limpiar búsqueda al cerrar
                 input.value = '';
                 clearBtn.style.display = 'none';
                 resultsContainer.style.display = 'none';
@@ -851,11 +760,6 @@ export function createSearchControl() {
                 clearResultsMarkers();
             });
 
-            // ============================================================================
-            // EVENT LISTENERS - OPTIMIZADOS CON DEBOUNCING
-            // ============================================================================
-
-            // Input con debouncing
             input.addEventListener('input', (e) => {
                 const query = e.target.value;
 
@@ -863,10 +767,8 @@ export function createSearchControl() {
                     clearBtn.style.display = 'block';
 
                     if (query.length >= 2) {
-                        // Limpiar timer anterior
                         clearTimeout(searchDebounceTimer);
 
-                        // Crear nuevo timer
                         searchDebounceTimer = setTimeout(() => {
                             const results = search(query);
                             renderResults(results, resultsContainer, navContainer, navCounter);
@@ -885,12 +787,10 @@ export function createSearchControl() {
                 }
             });
 
-            // Focus en input
             input.addEventListener('focus', () => {
                 if (input.value.length < 2) {
                     helpContainer.style.display = 'block';
                 } else if (input.value.length >= 2) {
-                    // No re-buscar si ya hay resultados visibles
                     if (resultsContainer.style.display === 'none') {
                         const results = search(input.value);
                         renderResults(results, resultsContainer, navContainer, navCounter);
@@ -898,7 +798,6 @@ export function createSearchControl() {
                 }
             });
 
-            // Click fuera para cerrar
             document.addEventListener('click', (e) => {
                 if (!container.contains(e.target)) {
                     resultsContainer.style.display = 'none';
@@ -906,21 +805,19 @@ export function createSearchControl() {
                 }
             });
 
-            // Botón limpiar
             clearBtn.addEventListener('click', () => {
                 input.value = '';
                 clearBtn.style.display = 'none';
                 resultsContainer.style.display = 'none';
                 navContainer.style.display = 'none';
                 clearResultsMarkers();
-                clearSearchCache(); // Limpiar caché también
+                clearSearchCache();
                 input.focus();
             });
 
-            // Filtro de tipo
             filterSelect.addEventListener('change', (e) => {
                 searchFilters.capaTipo = e.target.value;
-                clearSearchCache(); // Invalidar caché al cambiar filtros
+                clearSearchCache();
 
                 if (input.value.length >= 2) {
                     const results = search(input.value);
@@ -928,7 +825,6 @@ export function createSearchControl() {
                 }
             });
 
-            // Navegación
             container.querySelector('#searchNavPrev').addEventListener('click', () =>
                 navigateResults('prev')
             );
@@ -949,13 +845,8 @@ export function createSearchControl() {
     appState.searchControl = new L.Control.Search().addTo(appState.map);
 }
 
-// ============================================================================
-// RENDERIZADO DE RESULTADOS - OPTIMIZADO
-// ============================================================================
+// RENDERIZADO DE RESULTADOS
 
-/**
- * Renderiza resultados con límite y virtualización simple
- */
 function renderResults(results, container, navContainer, navCounter) {
     container.innerHTML = '';
 
@@ -968,7 +859,6 @@ function renderResults(results, container, navContainer, navCounter) {
 
     container.style.display = 'block';
 
-    // Mostrar navegación si hay resultados
     if (results.length > 0) {
         navContainer.style.display = 'flex';
 
@@ -978,10 +868,8 @@ function renderResults(results, container, navContainer, navCounter) {
         showAllResultsOnMap(results);
     }
 
-    // LÍMITE DE RESULTADOS RENDERIZADOS
     const limitedResults = results.slice(0, CONFIG.MAX_VISIBLE_RESULTS);
 
-    // Crear fragmento para inserción eficiente
     const fragment = document.createDocumentFragment();
 
     limitedResults.forEach(result => {
@@ -1008,7 +896,7 @@ function renderResults(results, container, navContainer, navCounter) {
 
     container.appendChild(fragment);
 
-    // Mensaje si hay más resultados
+
     if (results.length > CONFIG.MAX_VISIBLE_RESULTS) {
         const moreDiv = document.createElement('div');
         moreDiv.className = 'search-more-results';
@@ -1027,9 +915,7 @@ function renderResults(results, container, navContainer, navCounter) {
 // ============================================================================
 
 console.groupEnd();
-}
 
-// Hacer funciones disponibles globalmente para debugging
 if (typeof window !== 'undefined') {
     window.diagnosticarBuscador = diagnosticarBuscador;
     window.benchmarkBusqueda = benchmarkBusqueda;

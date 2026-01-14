@@ -107,7 +107,7 @@ const aguaConfig = {
     },
     apr_rural: {
       url: "apr_rural.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "COD_REG",
       nombrePersonalizado: "Servicios Sanitarios Rurales (Ex APR)",
       iconos: {
@@ -136,7 +136,6 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -145,7 +144,7 @@ const aguaConfig = {
     },
     plantas_desaladoras_puntos: {
       url: "plantas_desaladoras_puntos.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Sistema",
       nombrePersonalizado: "Plantas Desaladoras",
       iconos: {
@@ -184,7 +183,6 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -219,17 +217,15 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen de la Informacion",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#2d3436", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#2d3436",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     derechos_agua_2025: {
       url: "derechos_agua_2025.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       nombrePersonalizado: "Derechos de Aprovechamiento de Agua",
       atributo: "Uso del Agua",
       iconos: {
@@ -300,7 +296,6 @@ const aguaConfig = {
         "Fecha Corte Data": "Fecha Corte Data",
         "Origen Data": "Origen del Dato",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -309,7 +304,7 @@ const aguaConfig = {
     },
     plantas_aguas_servidas: {
       url: "plantas_aguas_servidas.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "REGION",
       nombrePersonalizado: "Plantas de Tratamiento de Aguas Servidas",
       iconos: {
@@ -347,7 +342,6 @@ const aguaConfig = {
         "Ultima Actualizacion": "Ultima Actualizacion del Dato",
         "Origen Data": "Origen de la Informacion",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -356,7 +350,7 @@ const aguaConfig = {
     },
     puntos_descargas: {
       url: "puntos_descargas.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "REGION",
       nombrePersonalizado: "Ptos. Descargas Plantas Aguas Servidas",
       iconos: {
@@ -392,7 +386,6 @@ const aguaConfig = {
         "Ultima Actualizacion": "Ultima Actualizacion del Dato",
         "Origen Data": "Origen de la Informacion",
       },
-      // Definir colores por valor del atributo si es necesario
       colores: {
         Inactivo: "#FF6B6B",
         Activo: "#4ECDC4",
@@ -423,12 +416,10 @@ const aguaConfig = {
         "Ultima Actualizacion": "Ultima Actualizacion del Dato",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#3d0202ff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#3d0202ff",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     lagunas_embalses: {
@@ -457,12 +448,10 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#116AA9", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#116AA9",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     salares: {
@@ -491,12 +480,10 @@ const aguaConfig = {
         km2: "Area en Km2",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#000a9bff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#000a9bff",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     humedales: {
@@ -529,12 +516,10 @@ const aguaConfig = {
         Ha_humedal: "Superficie en Hectáreas",
         "Origen Dato": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#52f76eff", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.8, // Transparencia del relleno
+        color: "#52f76eff",
+        weight: 1,
+        fillOpacity: 0.8,
       },
     },
     glaciares: {
@@ -569,12 +554,10 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#9FD5E2", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.7, // Transparencia del relleno
+        color: "#9FD5E2",
+        weight: 1,
+        fillOpacity: 0.7,
       },
     },
     cuencas_dga: {
@@ -602,12 +585,10 @@ const aguaConfig = {
         Area_km2: "Area en Km2",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#000000", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#000000",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     acuiferos: {
@@ -634,12 +615,10 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Dato": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#99a6ac", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.7, // Transparencia del relleno
+        color: "#99a6ac",
+        weight: 1,
+        fillOpacity: 0.7,
       },
     },
     decrero_escasez_2021: {
@@ -670,12 +649,10 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#000000", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#000000",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     decrero_escasez_2022: {
@@ -706,12 +683,10 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#000000", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#000000",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     decrero_escasez_2023: {
@@ -742,12 +717,10 @@ const aguaConfig = {
         Descripcion: "Descripcion",
         "Origen Data": "Origen del Dato",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#000000", // Color del borde
-        weight: 1, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0.3, // Transparencia del relleno
+        color: "#000000",
+        weight: 1,
+        fillOpacity: 0.3,
       },
     },
     limite_comunal_linea: {
@@ -764,25 +737,21 @@ const aguaConfig = {
         NOM_PROVIN: "Provincia",
         NOM_REGION: "Region",
       },
-      // Personalizar el color del borde y la transparencia
       estiloBase: {
-        color: "#2d3436", // Color del borde
-        weight: 2, // Grosor del borde
-        // Opacity: sirve para darle transparencia a las lineas
-        fillOpacity: 0, // Transparencia del relleno
+        color: "#2d3436",
+        weight: 2,
+        fillOpacity: 0,
       },
     },
     toponimia: {
       url: "toponimia.geojson",
-      type: "point", // Tipo de capa: point, line, polygon
+      type: "point",
       atributo: "Tipo",
       nombrePersonalizado: "Toponimia",
       iconos: {
-        // Edicion de Iconos
         Asentamiento: "localidad.png",
       },
       estiloAlternativo: {
-        // Icono alternativo en caso que no encuentre el icono
         color: "#FF6B6B",
         fillColor: "#FF6B6B",
         radius: 4,
@@ -796,12 +765,12 @@ const aguaConfig = {
       etiquetas: {
         campo: "Nombre",
         estilo: {
-          color: "#000000", // Color del texto
-          fontSize: "9px", // Tamaño de la fuente
-          fontFamily: "Arial, sans-serif", // Familia de la fuente
-          bufferColor: "#88304E", // Color del contorno
-          bufferWidth: 0.3, // Ancho del contorno
-          offsetY: -20, // Añadida propiedad para el offset vertical
+          color: "#000000",
+          fontSize: "9px",
+          fontFamily: "Arial, sans-serif",
+          bufferColor: "#88304E",
+          bufferWidth: 0.3,
+          offsetY: -20,
         },
       },
     },
