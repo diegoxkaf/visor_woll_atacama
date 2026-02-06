@@ -575,29 +575,26 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
-  padding: 1.5rem 0;
-  max-width: 100%;
+  gap: 25px;
+  magin-top:20px;
 }
 
 .logo-container a {
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
 }
 
 .modal-logo {
-  max-height: 50px;
+  max-height: 45px;
   width: auto;
   max-width: 100%;
   object-fit: contain;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .modal-logo:hover {
   transform: scale(1.05);
-  opacity: 0.8;
 }
 
 .logo-pill-container {
@@ -611,11 +608,10 @@
 }
 
 /* ========================================
-   ETIQUETAS DEL MAPA - VERSIÓN MEJORADA
-   Reemplazar la sección existente en components.css
+   ETIQUETAS DEL MAPA
    ======================================== */
 
-/* ===== TOOLTIP BASE (eliminar fondo blanco) ===== */
+/* ===== TOOLTIP BASE ===== */
 .leaflet-tooltip.custom-map-label {
   background: transparent !important;
   border: none !important;
@@ -625,7 +621,6 @@
   white-space: nowrap !important;
 }
 
-/* Eliminar la punta/flecha del tooltip */
 .leaflet-tooltip.custom-map-label::before,
 .leaflet-tooltip.custom-map-label::after {
   display: none !important;
