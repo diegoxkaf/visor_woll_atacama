@@ -568,31 +568,41 @@
   border: none;
 }
 
-/* ===== MODAL ===== */
+/* ===== MODAL LOGOS ===== */
+
+.logo-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem 0;
+  max-width: 100%;
+}
+
+.logo-container a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .modal-logo {
   max-height: 50px;
   width: auto;
-  transition: var(--transition-standard);
+  max-width: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .modal-logo:hover {
   transform: scale(1.05);
-  opacity: 0.9;
-}
-
-.logo-container {
-  max-width: 100%;
-  padding: 0;
-}
-
-.logo-container img {
-  margin: 0 10px;
-  flex-shrink: 0;
+  opacity: 0.8;
 }
 
 .logo-pill-container {
-  border-radius: var(--border-radius);
-  transition: var(--transition-standard);
+  border-radius: var(--border-radius, 8px);
+  transition: var(--transition-standard, 0.3s ease);
 }
 
 .logo-pill-container:hover {
