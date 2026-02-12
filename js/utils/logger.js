@@ -7,7 +7,7 @@
  * Determina si estamos en modo debug
  * En producción, solo se mostrarán warnings y errors
  */
-const DEBUG = true; // Cambiar a false en producción o usar variable de entorno
+const DEBUG = false; // Cambiar a false en producción o usar variable de entorno
 
 /**
  * Niveles de log
