@@ -642,6 +642,11 @@ function crearElementoCapa(
 }
 
 
+import { ConcurrentQueue } from "./concurrentQueue.js";
+import { estimateLayerSize } from "./layerUtils.js";
+
+// ... (existing imports)
+
 export async function activarCapasDeDimension(
   temaKey,
   listaCapas,
@@ -651,27 +656,43 @@ export async function activarCapasDeDimension(
     `Activando dimensión: ${temaKey}. Cargando ${listaCapas.length} capas.`
   );
 
-  // Cargar todas las capas secuencialmente, pero continuar si alguna falla
-  for (const capaNombre of listaCapas) {
-    try {
-      if (!appState.layers.loaded.has(capaNombre)) {
-        log.debug(
-          `Cargando capa individual ${capaNombre} desde tema ${temaKey}`
-        );
-        await cargarCapaIndividual(capaNombre, temaKey, temasConfig);
-        // Marcar como cargada
-        appState.layers.loaded.add(capaNombre);
-      } else {
-        log.debug(`Capa ${capaNombre} ya cargada, mostrando...`);
-        mostrarCapa(capaNombre);
-      }
-    } catch (error) {
-      // Log del error pero continuar con las demás capas
-      log.warn(`No se pudo cargar la capa ${capaNombre}, continuando con las demás...`);
-    }
-  }
+  // Determinar concurrencia según dispositivo
+  const isMobile = window.innerWidth < 769;
+  const CONCURRENCY_LIMIT = isMobile ? 2 : 4;
+  
+  const queue = new ConcurrentQueue(CONCURRENCY_LIMIT);
 
-  log.log(`Dimensión ${temaKey} activada. Capas mostradas.`);
+  // Ordenar capas: ligeras primero, pesadas al final
+  // Esto mejora la percepción de velocidad (User Experience)
+  const capasOrdenadas = [...listaCapas].sort((a, b) => {
+    return estimateLayerSize(a) - estimateLayerSize(b);
+  });
+
+  const promises = capasOrdenadas.map((capaNombre) => {
+    return queue.add(async () => {
+      try {
+        if (!appState.layers.loaded.has(capaNombre)) {
+          // Si no está cargada, cargarla
+          await cargarCapaIndividual(capaNombre, temaKey, temasConfig);
+          appState.layers.loaded.add(capaNombre);
+          log.debug(`Capa ${capaNombre} cargada exitosamente`);
+        } else {
+          // Si ya estaba cargada, solo asegurarnos de mostrarla
+          mostrarCapa(capaNombre);
+        }
+        
+        // Sincronizar UI inmediatamente después de cargar esta capa
+        syncIndividualCheckboxes(capaNombre, true);
+      } catch (error) {
+        log.warn(`Error cargando ${capaNombre}:`, error);
+      }
+    });
+  });
+
+  // Esperar a que todas termine (aunque la UI se irá actualizando progresivamente)
+  await Promise.all(promises);
+
+  log.log(`Dimensión ${temaKey} activada completamente.`);
 }
 
 export function desactivarCapasDeDimension(temaKey, listaCapas, temasConfig) {
@@ -771,6 +792,7 @@ export function actualizarCapasBase(contenedorId, capasBaseConfig) {
     log.warn(`Contenedor de capas base '${contenedorId}' no encontrado.`);
     return;
   }
+  contenedor.innerHTML = "";
   const capaKeys = Object.keys(capasBaseConfig);
   const radioGroupName =
     contenedorId === "sidebar-base-layers" ? "baseLayer" : "baseLayerMobile";
@@ -805,10 +827,11 @@ export function actualizarCapasBase(contenedorId, capasBaseConfig) {
           maxZoom: 19,
         });
 
-        if (map && currentBaseLayer) {
-          changeBaseLayer(map, nuevaCapa, currentBaseLayer);
+        if (appState.map && appState.currentBaseLayer) {
+          changeBaseLayer(appState.map, nuevaCapa, appState.currentBaseLayer);
+          appState.currentBaseLayer = nuevaCapa;
         } else {
-          console.error("Mapa o capa base actual no están definidos.");
+          console.error("Mapa o capa base actual no están definidos en appState.");
         }
       }
     });

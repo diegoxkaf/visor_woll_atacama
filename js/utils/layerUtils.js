@@ -79,17 +79,65 @@ export function cargarCapasGeoJSON(tema, temasConfig) {
 }
 
 /**
+ * Detecta si el entorno es propenso a bloqueos de Workers (IP privada + HTTP)
+ * @returns {boolean}
+ */
+/**
+ * Estima el peso de la capa para priorizar su carga.
+ * Menor número = Mayor prioridad (se carga antes).
+ * @param {string} capaNombre
+ * @returns {number} Peso estimado (10: ligero, 50: medio, 100: pesado)
+ */
+export function estimateLayerSize(capaNombre) {
+  // Capas pesadas conocidas (>10MB)
+  const heavyLayers = [
+    "borde_costero",
+    "humedales",
+    "energia_linea_media_transmision",
+    "plan_regulador_intercomunal_costero_norte",
+    "plan_regulador_intercomunal_costero_sur",
+    "hidrografia",
+    "energia_potencial_fotovoltaico",
+    "capacidad_uso_suelo",
+  ];
+
+  // Capas medianas (2-10MB)
+  const mediumLayers = [
+    "catastro_especies_frutales",
+    "catastro_variedades_frutales",
+    "glaciares",
+    "salares",
+    "derechos_agua_2025",
+    "red_canales",
+    "yacimientos",
+    "zonas_climaticas",
+    "limite_comunal_linea",
+  ];
+
+  if (heavyLayers.includes(capaNombre)) return 100;
+  if (mediumLayers.includes(capaNombre)) return 50;
+  
+  // Por defecto, asumir ligero
+  return 10;
+}
+
+/**
  * Obtiene los datos GeoJSON de una capa sin cargarla al mapa.
+ * Usa un Worker dedicado para fetch + procesamiento pesado (coordenadas).
  * @param {string} capaNombre 
  * @param {object} configCapa 
  * @returns {Promise<object>} Datos GeoJSON
  */
 export async function fetchLayerData(capaNombre, configCapa) {
   // Determinar la URL del GeoJSON
-  // Soporte para rutas absolutas o relativas
-  let url = configCapa.url.startsWith("http")
+  let relativeUrl = configCapa.url.startsWith("http")
     ? configCapa.url
     : `${PATHS.GEOJSON_BASE}${configCapa.url}`;
+
+  // Convertir a URL absoluta para que el Worker pueda resolver la ruta
+  const url = new URL(relativeUrl, window.location.href).href;
+
+  log.debug(`Solicitando datos para ${capaNombre} desde: ${url}`);
 
   // USAR UN WORKER para fetch y procesamiento pesado (coordenadas, etc.)
   const workerUrl = new URL(
@@ -103,6 +151,7 @@ export async function fetchLayerData(capaNombre, configCapa) {
     worker.onmessage = (e) => {
       const { type, data, error } = e.data;
       if (type === 'SUCCESS') {
+        log.log(`✓ Capa ${capaNombre} procesada por Worker.`);
         resolve(data);
       } else if (type === 'ERROR') {
         reject(new Error(error));
@@ -118,6 +167,7 @@ export async function fetchLayerData(capaNombre, configCapa) {
     worker.postMessage({ type: 'FETCH_AND_PROCESS', url });
   });
 }
+
 
 /**
  * Carga una capa GeoJSON individual al mapa.
@@ -205,6 +255,8 @@ export async function cargarCapaIndividual(
     const layerError = new LayerLoadError(capaNombre, error);
     handleError(layerError, 'LayerUtils.cargarCapaIndividual', false); // No mostrar al usuario
     throw layerError; // Re-lanzar para que el caller pueda manejarlo
+  } finally {
+    appState.layers.loading.delete(capaNombre);
   }
 }
 
@@ -362,22 +414,24 @@ export async function loadAllLayersForChat(layerConfigs, onProgress) {
   let loaded = 0;
   const total = layerConfigs.length;
 
-  const promises = layerConfigs.map(async (item) => {
-    try {
-      if (!isLayerLoaded(item.name) && !getLayerData(item.name)) {
-        const data = await fetchLayerData(item.name, item.config);
-        setLayerData(item.name, data);
+  // Procesar en lotes pequeños (concurrencia limitada) para no saturar al navegador
+  const CONCURRENCY = 3;
+  for (let i = 0; i < layerConfigs.length; i += CONCURRENCY) {
+    const batch = layerConfigs.slice(i, i + CONCURRENCY);
+    await Promise.all(batch.map(async (item) => {
+      try {
+        if (!isLayerLoaded(item.name) && !getLayerData(item.name)) {
+          const data = await fetchLayerData(item.name, item.config);
+          setLayerData(item.name, data);
+        }
+      } catch (err) {
+        log.warn(`Error pre-cargando capa ${item.name} para el chat:`, err);
+      } finally {
+        loaded++;
+        if (onProgress) onProgress(loaded, total, item.name);
       }
-      loaded++;
-      if (onProgress) onProgress(loaded, total, item.name);
-    } catch (err) {
-      console.warn(`Error pre-cargando capa ${item.name} para el chat:`, err);
-      loaded++;
-      if (onProgress) onProgress(loaded, total, item.name);
-    }
-  });
-
-  await Promise.all(promises);
+    }));
+  }
 }
 
 export function enableWMSGetFeatureInfo(servicioKey, wmsLayer, config = {}) {

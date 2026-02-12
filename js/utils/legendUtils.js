@@ -297,12 +297,12 @@ function obtenerCapasVisibles(tema) {
   );
 
   checkboxesPorTema.forEach((checkbox) => {
-    log.debug(`[obtenerCapasVisibles] Checkbox encontrado:`, {
-      id: checkbox.id,
-      value: checkbox.value,
-      checked: checkbox.checked,
-      classes: checkbox.className,
-    });
+    // log.debug(`[obtenerCapasVisibles] Checkbox encontrado:`, {
+    //   id: checkbox.id,
+    //   value: checkbox.value,
+    //   checked: checkbox.checked,
+    //   classes: checkbox.className,
+    // });
 
     if (
       checkbox.checked &&

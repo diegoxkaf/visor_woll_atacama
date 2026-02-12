@@ -28,35 +28,40 @@ import { createSearchControl, buildSearchIndex } from "./utils/searchControl.js"
 document.addEventListener("DOMContentLoaded", () => {
   logger.log("Inicializando aplicación...");
 
-  // Inicialización del mapa
-  const map = initMap("map", [-27.4539, -70.0727], 7);
-  const baseLayer = setBaseLayer(
-    map,
-    L.tileLayer(capasBaseConfig.openStreetMap.url, {
-      attribution: capasBaseConfig.openStreetMap.nombre,
-    })
-  );
+  try {
+    // Inicialización del mapa
+    const map = initMap("map", [-27.4539, -70.0727], 7);
+    const baseLayer = setBaseLayer(
+      map,
+      L.tileLayer(capasBaseConfig.openStreetMap.url, {
+        attribution: capasBaseConfig.openStreetMap.nombre,
+      })
+    );
 
-  // Inicializar estado global
-  initializeMap(map);
-  setCurrentBaseLayer(baseLayer);
-  setActiveTema("agua");
+    // Inicializar estado global
+    initializeMap(map);
+    setCurrentBaseLayer(baseLayer);
+    setActiveTema("agua");
 
-  createSearchControl();
-  logger.log("Control de búsqueda agregado al mapa");
+    createSearchControl();
+    logger.log("Control de búsqueda agregado al mapa");
 
-  // Actualizar sidebars
-  actualizarCapasBase("sidebar-base-layers", capasBaseConfig);
-  actualizarCapasBase("sidebar-base-layers-mobile", capasBaseConfig);
-  actualizarCapasSidebar(appState.activeTemaName, allTemasConfig);
-  actualizarLeyenda(appState.activeTemaName, allTemasConfig);
+    // Actualizar sidebars
+    actualizarCapasBase("sidebar-base-layers", capasBaseConfig);
+    actualizarCapasBase("sidebar-base-layers", capasBaseConfig);
+    // actualizarCapasBase("sidebar-base-layers-mobile", capasBaseConfig); // Eliminado para evitar duplicados, el gestor responsive mueve la lista desktop
+    actualizarCapasSidebar(appState.activeTemaName, allTemasConfig);
+    actualizarLeyenda(appState.activeTemaName, allTemasConfig);
 
-  // Event listeners
-  setupBaseLayerListeners();
-  setupInitialTheme();
-  setupThemeListeners();
+    // Event listeners
+    setupBaseLayerListeners();
+    setupInitialTheme();
+    setupThemeListeners();
 
-  logger.log("Aplicación inicializada correctamente");
+    logger.log("Aplicación inicializada correctamente");
+  } catch (error) {
+    logger.error("Error fatal durante la inicialización:", error);
+  }
 });
 
 function setupBaseLayerListeners() {

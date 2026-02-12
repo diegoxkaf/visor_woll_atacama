@@ -38,7 +38,7 @@ export const TIMING = {
 };
 
 export const PATHS = {
-    GEOJSON_BASE: "../../geojson/",
+    GEOJSON_BASE: "./geojson/",
     ICONS_BASE: "./assets/icons/",
     IMAGES_BASE: "./assets/img/",
 };

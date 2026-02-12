@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Visor Water Oriented Living Lab</title>
+  <title>Plataforma Territorial Water Oriented Living Lab</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" />
@@ -22,7 +22,7 @@
     <div class="container-fluid">
       <div class="navbar-start">
         <img src="assets/img/WOLL-Atacama-Logotipo-Blanco.png" alt="OEC Logo" />
-        <span class="navbar-brand">Visor Territorial "Water Oriented Living Lab"</span>
+        <span class="navbar-brand">Plataforma Territorial "Water Oriented Living Lab"</span>
       </div>
       <div class="buttons-container">
         <button id="toggleLeftSidebarBtn" class="btn btn-outline-light me-2" type="button" aria-expanded="false"
@@ -67,19 +67,23 @@
         <!-- Las capas se moverán aquí en mobile mediante JavaScript -->
       </div>
 
-      <button class="btn btn-secondary w-100 mb-3 mt-2" type="button">
-        <i class="fas fa-globe"></i> Capas Base
-      </button>
-      <div class="base-layers-container" id="sidebar-base-container">
-        <ul id="sidebar-base-layers" class="list-unstyled mb-0"></ul>
-      </div>
-
-      <!-- Contenedor mobile para capas base -->
-      <div id="sidebar-base-mobile-container" class="base-layers-container d-none">
+      <div id="sidebar-base-desktop-section">
         <button class="btn btn-secondary w-100 mb-3 mt-2" type="button">
           <i class="fas fa-globe"></i> Capas Base
         </button>
-        <ul id="sidebar-base-layers-mobile" class="list-unstyled mb-0"></ul>
+        <div class="base-layers-container" id="sidebar-base-container">
+          <ul id="sidebar-base-layers" class="list-unstyled mb-0"></ul>
+        </div>
+      </div>
+
+      <!-- Contenedor mobile para capas base -->
+      <div id="sidebar-base-mobile-section" class="d-none">
+        <button class="btn btn-secondary w-100 mb-3 mt-2" type="button">
+          <i class="fas fa-globe"></i> Capas Base
+        </button>
+        <div id="sidebar-base-mobile-container" class="base-layers-container">
+          <ul id="sidebar-base-layers-mobile" class="list-unstyled mb-0"></ul>
+        </div>
       </div>
     </div>
   </aside>
@@ -220,11 +224,21 @@
       // Mostrar modal de bienvenida solo la primera vez
       const welcomeModal = document.getElementById("welcomeModal");
       if (welcomeModal) {
-        const hasSeenWelcome = localStorage.getItem('hasSeenWelcomeModal');
+        let hasSeenWelcome = false;
+        try {
+          hasSeenWelcome = localStorage.getItem('hasSeenWelcomeModal');
+        } catch (e) {
+          console.warn("No se pudo acceder a localStorage para welcomeModal:", e);
+        }
+
         if (!hasSeenWelcome) {
           const modal = new bootstrap.Modal(welcomeModal);
           modal.show();
-          localStorage.setItem('hasSeenWelcomeModal', 'true');
+          try {
+            localStorage.setItem('hasSeenWelcomeModal', 'true');
+          } catch (e) {
+            console.warn("No se pudo guardar en localStorage hasSeenWelcomeModal:", e);
+          }
         }
       }
 
@@ -265,6 +279,7 @@
         leftSidebar.classList.remove("open");
         leftSidebar.setAttribute("aria-hidden", "true");
         toggleLeftBtn.setAttribute("aria-expanded", "false");
+        toggleLeftBtn.focus(); // Devolver foco
       }
 
       toggleLeftBtn.addEventListener("click", () => {
@@ -283,6 +298,7 @@
         rightSidebar.classList.remove("open");
         rightSidebar.setAttribute("aria-hidden", "true");
         toggleRightBtn.setAttribute("aria-expanded", "false");
+        toggleRightBtn.focus(); // Devolver foco
       }
 
       toggleRightBtn.addEventListener("click", () => {
@@ -304,6 +320,7 @@
         chatSidebar.classList.remove("open");
         chatSidebar.setAttribute("aria-hidden", "true");
         toggleChatBtn.setAttribute("aria-expanded", "false");
+        toggleChatBtn.focus(); // Devolver foco
       }
 
       toggleChatBtn.addEventListener("click", () => {
@@ -406,7 +423,11 @@
 
       function adaptSidebarPlacement() {
         const w = window.innerWidth;
+        const desktopBaseSection = document.getElementById("sidebar-base-desktop-section");
+        const mobileBaseSection = document.getElementById("sidebar-base-mobile-section");
+
         if (w < BREAKPOINT) {
+          // MODO MOBILE: Mover listas al contenedor móvil
           if (mobileLayersDiv && desktopLayersUl) {
             moveNodeToContainer(desktopLayersUl, mobileLayersDiv);
             mobileLayersDiv.classList.remove('d-none');
@@ -414,24 +435,20 @@
           }
           if (mobileBaseDiv && desktopBaseUl) {
             moveNodeToContainer(desktopBaseUl, mobileBaseDiv);
-            const mobileBaseContainer = document.getElementById('sidebar-base-mobile-container');
-            if (mobileBaseContainer) mobileBaseContainer.classList.remove('d-none');
-            if (desktopBaseContainer) desktopBaseContainer.classList.add('d-none');
+            if (mobileBaseSection) mobileBaseSection.classList.remove('d-none');
+            if (desktopBaseSection) desktopBaseSection.classList.add('d-none');
           }
         } else {
-
+          // MODO DESKTOP: Mover listas al contenedor desktop
           if (desktopLayersContainer && desktopLayersUl) {
             moveNodeToContainer(desktopLayersUl, desktopLayersContainer);
-            // Mostrar contenedor desktop y ocultar mobile
             desktopLayersContainer.classList.remove('d-none');
             if (mobileLayersDiv) mobileLayersDiv.classList.add('d-none');
           }
           if (desktopBaseContainer && desktopBaseUl) {
             moveNodeToContainer(desktopBaseUl, desktopBaseContainer);
-            // Mostrar contenedor desktop y ocultar mobile
-            desktopBaseContainer.classList.remove('d-none');
-            const mobileBaseContainer = document.getElementById('sidebar-base-mobile-container');
-            if (mobileBaseContainer) mobileBaseContainer.classList.add('d-none');
+            if (desktopBaseSection) desktopBaseSection.classList.remove('d-none');
+            if (mobileBaseSection) mobileBaseSection.classList.add('d-none');
           }
         }
       }
