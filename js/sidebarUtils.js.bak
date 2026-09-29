@@ -1,0 +1,1286 @@
+/**
+ * Funciones para actualizar el sidebar (capas y capas base)
+ * @module utils/sidebarUtils
+ */
+
+import { appState } from "../store/appState.js";
+import { changeBaseLayer } from "./mapUtils.js";
+import { actualizarLeyenda } from "./legendUtils.js";
+import { obtenerCapasParaCargaInicial, obtenerTodasLasCapasDeDimension } from "./configUtils.js";
+import { createContextLogger } from "./logger.js";
+import { openAttributeTable } from "./attributeTableUtils.js";
+import { openDownloadModal } from "./downloadUtils.js";
+import { escapeHtml } from "./helpers.js";
+import { ConcurrentQueue } from "./concurrentQueue.js";
+import { cargarCapaIndividual, mostrarCapa, ocultarCapa, setLayerOpacity, estimateLayerSize } from "./layerUtils.js";
+
+
+const log = createContextLogger('SidebarUtils');
+
+// Click global para cerrar menús de opciones de capa
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.layer-options-container') && !e.target.closest('.layer-options-menu')) {
+    document.querySelectorAll('.layer-options-menu.show').forEach(menu => {
+      menu.classList.remove('show');
+      // Restaurar al padre original si está en body (patrón portal)
+      if (menu.parentElement === document.body && menu._originalParent) {
+        menu._originalParent.appendChild(menu);
+        menu.style.position = '';
+        menu.style.top = '';
+        menu.style.left = '';
+        menu.style.right = '';
+        menu.style.zIndex = '';
+      }
+    });
+    document.querySelectorAll('.menu-open-context').forEach(el => {
+      el.classList.remove('menu-open-context');
+    });
+  }
+});
+
+
+/**
+ * Construye los grupos por dimensión con subgrupos temáticos dentro de un contenedor.
+ * @param {HTMLElement} contenedor - Contenedor del sidebar
+ * @param {object} temasConfig - Configuración global de temas
+ */
+function agruparCapasPorDimensionEn(contenedor, temasConfig) {
+  if (!contenedor || !temasConfig) return;
+
+  contenedor.innerHTML = "";
+  const dimensionKeys = Object.keys(temasConfig);
+
+  dimensionKeys.forEach((temaKey) => {
+    const temaConfig = temasConfig[temaKey];
+    if (!temaConfig || !temaConfig.capas || temaConfig.capas.length === 0)
+      return;
+
+    // --- GRUPO DE DIMENSIÓN ---
+    const dimensionGroup = document.createElement("div");
+    dimensionGroup.classList.add("dimension-group", "mb-3");
+    dimensionGroup.setAttribute("data-dimension-key", temaKey);
+
+    // --- HEADER DE DIMENSIÓN ---
+    const header = document.createElement("div");
+    header.classList.add(
+      "dimension-group-header",
+      "d-flex",
+      "justify-content-between",
+      "align-items-center",
+      "mb-2"
+    );
+
+    const dimensionName = temaConfig.nombre || temaKey.charAt(0).toUpperCase() + temaKey.slice(1);
+    const switchId = `dimension-switch-${temaKey}-${contenedor.id}`;
+    const isInitialTheme = temaKey === appState.activeTemaName;
+    const collapseId = `collapse-${temaKey}-${contenedor.id}`;
+    const temaIcono = temaConfig.icono || 'layers'; // Ícono fallback por si no hay config
+
+    header.innerHTML = `
+      <input class="dimension-switch sr-only" type="checkbox" id="${switchId}" value="${temaKey}" ${isInitialTheme ? "checked" : ""}>
+      
+      <label class="group-vis-btn" for="${switchId}" title="Modificar visibilidad completa">
+        <span class="material-symbols-outlined vis-icon-on">visibility</span>
+        <span class="material-symbols-outlined vis-icon-off">visibility_off</span>
+      </label>
+      
+      <div class="dimension-title-container">
+        <span class="material-symbols-outlined dimension-icon">${temaIcono}</span>
+        <span class="dimension-title">${dimensionName}</span>
+      </div>
+
+      <button class="btn-collapse-toggle" type="button" aria-expanded="${isInitialTheme ? "true" : "false"}">
+        <span id="btn-collapse-${temaKey}" class="material-symbols-outlined ${isInitialTheme ? "" : "collapsed-icon-rotated"}">expand_more</span>
+      </button>
+    `;
+
+    const switchInput = header.querySelector('.dimension-switch');
+    const collapseButton = header.querySelector('.btn-collapse-toggle');
+    const switchLabel = header.querySelector('.dimension-title');
+    const titleContainer = header.querySelector('.dimension-title-container');
+
+    // --- CONTENEDOR DE CONTENIDO DE LA DIMENSIÓN ---
+    const childrenContainer = document.createElement("ul");
+    childrenContainer.id = collapseId;
+    childrenContainer.classList.add(
+      "collapse",
+      "dimension-children",
+      "list-unstyled",
+      "mt-1",
+      "ps-0"
+    );
+
+    if (isInitialTheme) {
+      childrenContainer.classList.add("show", "dimension-active");
+    }
+
+    const toggleCollapse = () => {
+      childrenContainer.classList.toggle("show");
+      const icon = header.querySelector('#btn-collapse-' + temaKey);
+      if (icon) icon.classList.toggle("collapsed-icon-rotated");
+    };
+    collapseButton.addEventListener("click", toggleCollapse);
+    titleContainer.addEventListener("click", toggleCollapse);
+
+    // --- DETERMINAR QUÉ SE CARGA INICIALMENTE ---
+    const cargaInicial = temaConfig.cargaInicial || {};
+    const gruposIniciales = cargaInicial.grupos || [];
+    const capasIniciales = cargaInicial.capas || [];
+
+    // --- VERIFICAR SI EXISTEN GRUPOS ---
+    if (temaConfig.grupos && Object.keys(temaConfig.grupos).length > 0) {
+      // MODO CON GRUPOS
+      Object.entries(temaConfig.grupos).forEach(([grupoKey, grupoConfig]) => {
+        const grupoLi = document.createElement("li");
+        grupoLi.classList.add("grupo-tematico", "mb-2");
+        grupoLi.setAttribute("data-grupo-key", grupoKey);
+
+        // Determinar si este grupo debe cargarse inicialmente
+        const seCargaInicialmente =
+          isInitialTheme && gruposIniciales.includes(grupoKey);
+
+        const grupoSwitchId = `grupo-switch-${temaKey}-${grupoKey}-${contenedor.id}`;
+        const grupoCollapseId = `collapse-grupo-${temaKey}-${grupoKey}-${contenedor.id}`;
+
+        // Header del grupo temático
+        const grupoHeader = document.createElement("div");
+        grupoHeader.classList.add(
+          "grupo-header",
+          "d-flex",
+          "align-items-center",
+          "justify-content-between",
+          "mb-1"
+        );
+
+        grupoHeader.innerHTML = `
+          <input class="grupo-switch sr-only" type="checkbox" id="${grupoSwitchId}" data-tema="${temaKey}" data-grupo="${grupoKey}" ${seCargaInicialmente ? "checked" : ""}>
+          
+          <label class="group-vis-btn" for="${grupoSwitchId}" title="Modificar visibilidad del grupo">
+            <span class="material-symbols-outlined vis-icon-on">visibility</span>
+            <span class="material-symbols-outlined vis-icon-off">visibility_off</span>
+          </label>
+          
+          <div class="dimension-title-container">
+            <span class="grupo-nombre">${grupoConfig.nombre}</span>
+          </div>
+
+          <button class="btn-collapse-toggle-grupo" type="button" aria-expanded="${seCargaInicialmente ? "true" : "false"}">
+            <span id="btn-collapse-grupo-${grupoKey}" class="material-symbols-outlined ${seCargaInicialmente ? "" : "collapsed-icon-rotated"}">expand_more</span>
+          </button>
+        `;
+
+        const grupoSwitch = grupoHeader.querySelector('.grupo-switch');
+        const grupoSwitchLabel = grupoHeader.querySelector('.grupo-nombre');
+        const grupoCollapseBtn = grupoHeader.querySelector('.btn-collapse-toggle-grupo');
+        const grupoTitleContainer = grupoHeader.querySelector('.dimension-title-container');
+
+        // Unified grupo collapse handler (no Bootstrap)
+        const toggleGrupoCollapse = () => {
+          const grupoCapasEl = document.getElementById(grupoCollapseId);
+          if (grupoCapasEl) grupoCapasEl.classList.toggle("show");
+          const icon = document.getElementById('btn-collapse-grupo-' + grupoKey);
+          if (icon) icon.classList.toggle("collapsed-icon-rotated");
+        };
+        grupoCollapseBtn.addEventListener("click", toggleGrupoCollapse);
+        grupoTitleContainer.addEventListener("click", toggleGrupoCollapse);
+
+        grupoLi.appendChild(grupoHeader);
+
+        // Contenedor de capas del grupo
+        const grupoCapasUl = document.createElement("ul");
+        grupoCapasUl.id = grupoCollapseId;
+        grupoCapasUl.classList.add(
+          "collapse",
+          "grupo-capas-list",
+          "list-unstyled",
+          "ps-3"
+        );
+
+        if (seCargaInicialmente) {
+          grupoCapasUl.classList.add("show");
+        }
+
+        // Agregar capas del grupo - PASAR temasConfig como parámetro
+        grupoConfig.capas.forEach((capaNombre) => {
+          const capaLi = crearElementoCapa(
+            capaNombre,
+            temaKey,
+            temaConfig,
+            temasConfig,
+            contenedor.id,
+            seCargaInicialmente
+          );
+          grupoCapasUl.appendChild(capaLi);
+        });
+
+        grupoLi.appendChild(grupoCapasUl);
+        childrenContainer.appendChild(grupoLi);
+
+        // === LISTENER DEL SWITCH DEL GRUPO ===
+        grupoSwitch.addEventListener("change", async (e) => {
+          const grupoActivo = e.target.checked;
+
+          // Obtener todos los checkboxes de las capas dentro de este grupo
+          const capasCheckboxes = grupoCapasUl.querySelectorAll(
+            'input.layer-checkbox[type="checkbox"]'
+          );
+
+          if (grupoActivo) {
+            // Mostrar indicador de carga
+            grupoSwitchLabel.innerHTML = `${grupoConfig.nombre} <small class="text-muted">(Cargando...)</small>`;
+
+            // Activar todas las capas del grupo
+            for (const checkbox of capasCheckboxes) {
+              const capaNombre = checkbox.value;
+
+              // Si no está cargada, cargarla
+              if (!appState.layers.loaded.has(capaNombre)) {
+                await cargarCapaIndividual(capaNombre, temaKey, temasConfig);
+                appState.layers.loaded.add(capaNombre);
+              }
+
+              // Mostrar la capa
+              mostrarCapa(capaNombre);
+
+              // Marcar el checkbox
+              if (!checkbox.checked) {
+                checkbox.checked = true;
+              }
+            }
+
+            // Restaurar nombre del grupo
+            grupoSwitchLabel.textContent = grupoConfig.nombre;
+          } else {
+            // Desactivar todas las capas del grupo
+            capasCheckboxes.forEach((checkbox) => {
+              const capaNombre = checkbox.value;
+              ocultarCapa(capaNombre);
+
+              // Desmarcar el checkbox
+              if (checkbox.checked) {
+                checkbox.checked = false;
+              }
+            });
+          }
+
+          // Actualizar leyenda
+          actualizarLeyenda(temaKey, temasConfig);
+        });
+
+        // SINCRONIZAR SWITCH DEL GRUPO CON CAPAS INDIVIDUALES
+        grupoCapasUl.addEventListener("change", (e) => {
+          if (
+            e.target.classList.contains("form-check-input") &&
+            !e.target.classList.contains("grupo-switch")
+          ) {
+            const capasCheckboxes = grupoCapasUl.querySelectorAll(
+              'input.layer-checkbox[type="checkbox"]'
+            );
+            const todasActivas = Array.from(capasCheckboxes).every(
+              (cb) => cb.checked
+            );
+            const todasInactivas = Array.from(capasCheckboxes).every(
+              (cb) => !cb.checked
+            );
+
+            if (todasActivas) {
+              grupoSwitch.checked = true;
+            } else if (todasInactivas) {
+              grupoSwitch.checked = false;
+            }
+          }
+        });
+      });
+    } else {
+      // MODO SIN GRUPOS (comportamiento original con carga selectiva)
+      temaConfig.capas.forEach((capaNombre) => {
+        const seCargaInicialmente =
+          isInitialTheme &&
+          (capasIniciales.length === 0 || capasIniciales.includes(capaNombre));
+        const capaLi = crearElementoCapa(
+          capaNombre,
+          temaKey,
+          temaConfig,
+          temasConfig,
+          contenedor.id,
+          seCargaInicialmente
+        );
+        childrenContainer.appendChild(capaLi);
+      });
+    }
+
+    // --- LISTENER DEL SWITCH DE DIMENSIÓN ---
+    switchInput.addEventListener("change", async (e) => {
+      const isActive = e.target.checked;
+
+      if (isActive) {
+        // Desactivar dimensión previa
+        if (
+          appState.ui.activeDimension &&
+          appState.ui.activeDimension !== temaKey
+        ) {
+          const prevSwitch = document.getElementById(
+            `dimension-switch-${appState.ui.activeDimension}-${contenedor.id}`
+          );
+          if (prevSwitch) prevSwitch.checked = false;
+
+          const prevChildrenContainer = document.getElementById(
+            `collapse-${appState.ui.activeDimension}-${contenedor.id}`
+          );
+          if (prevChildrenContainer) {
+            prevChildrenContainer.classList.remove("dimension-active", "show");
+            // Only dispatch change on LAYER checkboxes, NOT on dimension/grupo switches
+            prevChildrenContainer
+              .querySelectorAll('input.layer-checkbox[type="checkbox"]')
+              .forEach((cb) => {
+                if (cb.checked) {
+                  cb.checked = false;
+                  cb.dispatchEvent(new Event("change"));
+                }
+              });
+            // Uncheck grupo switches without dispatching (to avoid cascading)
+            prevChildrenContainer
+              .querySelectorAll('input.grupo-switch[type="checkbox"]')
+              .forEach((cb) => {
+                cb.checked = false;
+              });
+          }
+
+          const prevCapas =
+            temasConfig[appState.ui.activeDimension]?.capas || [];
+          desactivarCapasDeDimension(
+            appState.ui.activeDimension,
+            prevCapas,
+            temasConfig
+          );
+        }
+
+        appState.ui.activeDimension = temaKey;
+
+        // CARGAR TODAS LAS CAPAS AL ACTIVAR LA DIMENSION MANUALMENTE
+        const capasACargar = obtenerTodasLasCapasDeDimension(temaConfig);
+
+        if (capasACargar.length > 0) {
+          // Mostrar indicador de carga en el label
+          const originalText = switchLabel.textContent;
+          switchLabel.innerHTML = `${originalText} <small class="text-muted">(Cargando...)</small>`;
+
+          await activarCapasDeDimension(
+            temaKey,
+            capasACargar,
+            temasConfig
+          );
+
+          // Restaurar texto original
+          switchLabel.textContent = originalText;
+        }
+
+        childrenContainer.classList.add("dimension-active", "show");
+
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        // Marcar los checkboxes de TODAS las capas
+        capasACargar.forEach((capaNombre) => {
+          const checkbox = document.getElementById(`capa-${capaNombre}`);
+          if (checkbox && !checkbox.checked) {
+            checkbox.checked = true;
+          }
+        });
+
+        // Activar switches de TODOS los grupos
+        if (temaConfig.grupos) {
+          Object.keys(temaConfig.grupos).forEach((grupoKey) => {
+            const grupoSwitch = document.getElementById(
+              `grupo-switch-${temaKey}-${grupoKey}-${contenedor.id}`
+            );
+            if (grupoSwitch && !grupoSwitch.checked) {
+              grupoSwitch.checked = true;
+            }
+          });
+        }
+
+        // Actualizar leyenda DESPUÉS de marcar los checkboxes
+        actualizarLeyenda(temaKey, temasConfig);
+      } else {
+        const capas = obtenerTodasLasCapasDeDimension(temaConfig);
+        desactivarCapasDeDimension(temaKey, capas, temasConfig);
+
+        if (appState.ui.activeDimension === temaKey) {
+          appState.ui.activeDimension = null;
+        }
+
+        childrenContainer.classList.remove("dimension-active");
+
+        const legendContainer = document.getElementById("sidebar-legend");
+        if (legendContainer) {
+          legendContainer.innerHTML =
+            '<p class="text-muted small">No hay capas activas.</p>';
+        }
+      }
+
+      // Sincronizar checkboxes según la carga total
+      if (isActive) {
+        const capasACargar = obtenerTodasLasCapasDeDimension(temaConfig);
+        childrenContainer
+          .querySelectorAll('input.layer-checkbox[type="checkbox"]')
+          .forEach((cb) => {
+            if (!cb.checked && capasACargar.includes(cb.value)) {
+              cb.checked = true;
+            }
+          });
+
+        // Sincronizar switches de grupos a todos activados
+        if (temaConfig.grupos) {
+          Object.keys(temaConfig.grupos).forEach((grupoKey) => {
+            const grupoSwitch = document.getElementById(
+              `grupo-switch-${temaKey}-${grupoKey}-${contenedor.id}`
+            );
+            if (grupoSwitch && !grupoSwitch.checked) {
+              grupoSwitch.checked = true;
+            }
+          });
+        }
+      } else {
+        // Al desactivar, desmarcar capas (sin cascada en switches)
+        childrenContainer
+          .querySelectorAll('input.layer-checkbox[type="checkbox"]')
+          .forEach((cb) => {
+            if (cb.checked) {
+              cb.checked = false;
+              cb.dispatchEvent(new Event("change"));
+            }
+          });
+        // Uncheck grupo switches silently
+        childrenContainer
+          .querySelectorAll('input.grupo-switch[type="checkbox"]')
+          .forEach((cb) => {
+            cb.checked = false;
+          });
+      }
+    });
+
+    dimensionGroup.appendChild(header);
+    dimensionGroup.appendChild(childrenContainer);
+    contenedor.appendChild(dimensionGroup);
+
+    if (isInitialTheme) {
+      appState.ui.activeDimension = temaKey;
+    }
+  });
+}
+
+/**
+ * Crea un elemento <li> para una capa individual con control de opacidad
+ * @param {string} capaNombre - Nombre de la capa
+ * @param {string} temaKey - Clave del tema
+ * @param {object} temaConfig - Configuración del tema
+ * @param {object} temasConfig - Configuración GLOBAL de todos los temas
+ * @param {string} contenedorId - ID del contenedor
+ * @param {boolean} isInitialTheme - Si es el tema inicial
+ * @returns {HTMLElement} Elemento <li>
+ */
+function crearElementoCapa(capaNombre, temaKey, temaConfig, temasConfig, contenedorId, isInitialTheme) {
+  const listItem = document.createElement("li");
+  listItem.setAttribute("data-capa-nombre", capaNombre);
+  listItem.classList.add("layer-item-container", "mb-2");
+
+  const checkboxId = `${contenedorId === "sidebar-layers" ? "capa" : "capa-mobile"}-${capaNombre}`;
+
+  // Obtener el nombre personalizado de la configuración o usar el nombre de la capa
+  const displayCapaName = temaConfig.estilo?.[capaNombre]?.nombrePersonalizado || capaNombre;
+
+  // Obtener opacidad inicial (si existe en appState)
+  const initialOpacity = getLayerOpacity(capaNombre);
+
+  const configCapa = temaConfig.estilo?.[capaNombre] || {};
+
+  // Detectar atributos y valores para sub-capas (filtrado)
+  let subCategoriesHtml = '';
+  if (configCapa.atributo && (configCapa.iconos || configCapa.colores)) {
+    const valoresObj = configCapa.iconos || configCapa.colores;
+    const valores = Object.keys(valoresObj);
+    const hiddenSet = appState.layers.hiddenAttributes.get(capaNombre) || new Set();
+
+    let checkboxesHtml = valores.map(val => {
+      const valId = escapeHtml(val).replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+      const isChecked = !hiddenSet.has(val);
+      return `
+        <div class="sub-layer-item mb-1 d-flex align-items-center" style="font-size: 0.85em; gap: 6px; padding-left: 36px;">
+          <input type="checkbox" class="sub-layer-checkbox form-check-input mt-0" 
+            id="sub-${checkboxId}-${valId}" 
+            data-capa="${capaNombre}" 
+            data-valor="${escapeHtml(val)}" 
+            ${isChecked ? "checked" : ""}>
+          <label for="sub-${checkboxId}-${valId}" class="m-0 text-muted" style="cursor: pointer; opacity: 0.9;">${escapeHtml(val)}</label>
+        </div>
+      `;
+    }).join('');
+
+    subCategoriesHtml = `
+      <div class="sub-layers-container mt-1 mb-2" style="display: ${isInitialTheme ? 'block' : 'none'};">
+        ${checkboxesHtml}
+      </div>
+    `;
+  }
+
+  let isClusterMode = appState.layers.clusterMode.get(capaNombre);
+  if (isClusterMode === undefined && configCapa.type === "point" && configCapa.cluster === true) {
+    isClusterMode = true;
+  } else if (isClusterMode === undefined) {
+    isClusterMode = false;
+  }
+
+  // Determinar estado actual del modo heatmap
+  let isHeatmapMode = appState.layers.heatmapMode.get(capaNombre);
+  if (isHeatmapMode === undefined && configCapa.type === "point" && configCapa.heatmap === true) {
+    isHeatmapMode = true;
+    appState.layers.heatmapMode.set(capaNombre, true);
+  } else if (isHeatmapMode === undefined) {
+    isHeatmapMode = false;
+  }
+
+  // Crear estructura de capa
+  listItem.innerHTML = `
+    <div class="layer-item">
+      <input 
+        class="layer-checkbox sr-only" 
+        type="checkbox" 
+        id="${checkboxId}" 
+        value="${capaNombre}"
+        ${isInitialTheme ? "checked" : ""}
+        data-capa="${capaNombre}"
+        data-tema-padre="${temaKey}"
+      >
+      <label class="layer-vis-btn" for="${checkboxId}" title="Alternar visibilidad">
+        <span class="material-symbols-outlined vis-icon-on">visibility</span>
+        <span class="material-symbols-outlined vis-icon-off">visibility_off</span>
+      </label>
+      <div class="layer-item-content">
+        <div class="layer-item-header">
+          <label class="layer-item-name" for="${checkboxId}">${displayCapaName}</label>
+          <span class="material-symbols-outlined layer-warning" title="Aviso">warning</span>
+        </div>
+        <div class="layer-opacity-control">
+          <input 
+            type="range" 
+            class="layer-opacity-slider" 
+            data-capa="${capaNombre}"
+            min="0" 
+            max="100" 
+            value="${initialOpacity}"
+            step="1"
+          >
+        </div>
+      </div>
+      <div class="layer-options-container">
+        <button class="layer-menu-btn" title="Opciones" type="button">
+          <span class="material-symbols-outlined">more_vert</span>
+        </button>
+        <div class="layer-options-menu">
+          <button class="layer-option-item" type="button" data-action="zoom-capa" data-capa="${capaNombre}">
+            <span class="material-symbols-outlined">zoom_in_map</span>
+            Zoom a la Capa
+          </button>
+          <button class="layer-option-item" type="button" data-action="ver-tabla" data-capa="${capaNombre}">
+            <span class="material-symbols-outlined">table_chart</span>
+            Ver tabla de Atributos
+          </button>
+          ${configCapa.type === 'point' ? `
+          <button class="layer-option-item btn-cluster-toggle" type="button" data-action="toggle-cluster" data-capa="${capaNombre}">
+            <span class="material-symbols-outlined">${isClusterMode ? 'grid_off' : 'grid_view'}</span>
+            ${isClusterMode ? 'Desactivar Cluster' : 'Activar Cluster'}
+          </button>
+          <button class="layer-option-item btn-heatmap-toggle" type="button" data-action="toggle-heatmap" data-capa="${capaNombre}">
+            <span class="material-symbols-outlined">heat</span>
+            ${isHeatmapMode ? 'Desactivar Mapa de Calor' : 'Activar Mapa de Calor'}
+          </button>
+          ` : ''}
+          <button class="layer-option-item" type="button" data-action="descargar-capa" data-capa="${capaNombre}">
+            <span class="material-symbols-outlined">download</span>
+            Descargar Capa
+          </button>
+        </div>
+      </div>
+    </div>
+    ${subCategoriesHtml}
+  `;
+
+  const checkbox = listItem.querySelector(`#${checkboxId}`);
+  const opacitySlider = listItem.querySelector('.layer-opacity-slider');
+
+  // Evento del checkbox
+  checkbox.addEventListener("change", async (e) => {
+    const isChecked = e.target.checked;
+
+    if (isChecked) {
+      const subContainer = listItem.querySelector('.sub-layers-container');
+      if (subContainer) subContainer.style.display = 'block';
+
+      if (!appState.layers.loaded.has(capaNombre)) {
+        // Capa no cargada: cargar y luego aplicar opacidad
+        const nameLabel = listItem.querySelector('.layer-item-name');
+        const originalText = nameLabel.innerHTML;
+        nameLabel.innerHTML = `${originalText} <span class="loading-indicator">...</span>`;
+
+        try {
+          await cargarCapaIndividual(capaNombre, temaKey, temasConfig);
+          appState.layers.loaded.add(capaNombre);
+          // Aplicar opacidad actual del slider
+          const opacity = parseInt(opacitySlider.value) / 100;
+          if (opacity < 1) setLayerOpacity(capaNombre, opacity);
+        } catch (err) {
+          e.target.checked = false;
+        } finally {
+          nameLabel.innerHTML = originalText;
+        }
+      } else {
+        // Capa ya cargada: solo mostrarla y aplicar opacidad
+        mostrarCapa(capaNombre);
+        const opacity = parseInt(opacitySlider.value) / 100;
+        if (opacity < 1) setLayerOpacity(capaNombre, opacity);
+      }
+      listItem.classList.add('layer-active');
+    } else {
+      // Desactivar capa
+      const subContainer = listItem.querySelector('.sub-layers-container');
+      if (subContainer) subContainer.style.display = 'none';
+      ocultarCapa(capaNombre);
+      listItem.classList.remove('layer-active');
+    }
+    actualizarLeyenda(temaKey, temasConfig);
+  });
+
+  // Evento del slider de opacidad
+  if (opacitySlider) {
+    opacitySlider.addEventListener('input', (e) => {
+      const value = e.target.value;
+      const opacity = value / 100;
+      saveLayerOpacity(capaNombre, parseInt(value));
+      if (checkbox.checked && appState.layers.loaded.has(capaNombre)) {
+        setLayerOpacity(capaNombre, opacity);
+      }
+    });
+  }
+
+  // Eventos del menú de opciones — patrón "portal"
+  // El menú se mueve al <body> cuando se abre para escapar del overflow:auto
+  // del .sidebar-content, que crea un stacking context que atrapa el z-index.
+  const menuBtn = listItem.querySelector('.layer-menu-btn');
+  const menuOptions = listItem.querySelector('.layer-options-menu');
+  if (menuBtn && menuOptions) {
+    // Guardamos el padre original para restaurar el menú al cerrarlo
+    const menuOriginalParent = menuOptions.parentElement;
+
+    function openMenu() {
+      // Cerrar otros menús abiertos
+      document.querySelectorAll('.layer-options-menu.show').forEach(menu => {
+        if (menu !== menuOptions) closeOtherMenu(menu);
+      });
+      document.querySelectorAll('.menu-open-context').forEach(el => {
+        if (el !== listItem) el.classList.remove('menu-open-context');
+      });
+
+      // Mover al body y posicionar con coordenadas del viewport
+      document.body.appendChild(menuOptions);
+      menuOptions.classList.add('show');
+      listItem.classList.add('menu-open-context');
+      repositionMenu();
+    }
+
+    function repositionMenu() {
+      const btnRect = menuBtn.getBoundingClientRect();
+      const menuWidth = menuOptions.offsetWidth || 180;
+      let left = btnRect.right - menuWidth;
+      let top = btnRect.bottom + 4;
+
+      // Evitar desbordamiento por la derecha
+      if (left < 4) left = 4;
+      // Evitar desbordamiento por abajo
+      const spaceBelow = window.innerHeight - top;
+      if (spaceBelow < 160 && btnRect.top > 160) {
+        // Abrir hacia arriba
+        top = btnRect.top - (menuOptions.offsetHeight || 160) - 4;
+      }
+
+      menuOptions.style.position = 'fixed';
+      menuOptions.style.top = `${top}px`;
+      menuOptions.style.left = `${left}px`;
+      menuOptions.style.right = 'auto';
+      menuOptions.style.zIndex = '99999';
+    }
+
+    function closeMenu() {
+      menuOptions.classList.remove('show');
+      listItem.classList.remove('menu-open-context');
+      // Restaurar al padre original
+      if (menuOptions.parentElement !== menuOriginalParent) {
+        menuOriginalParent.appendChild(menuOptions);
+        menuOptions.style.position = '';
+        menuOptions.style.top = '';
+        menuOptions.style.left = '';
+        menuOptions.style.right = '';
+        menuOptions.style.zIndex = '';
+      }
+    }
+
+    function closeOtherMenu(menu) {
+      menu.classList.remove('show');
+      const li = menu.closest('.layer-item-container') ||
+        document.querySelector(`.menu-open-context`);
+      if (li) li.classList.remove('menu-open-context');
+      // Restaurar al padre original si está en body
+      if (menu.parentElement === document.body && menu._originalParent) {
+        menu._originalParent.appendChild(menu);
+        menu.style.position = '';
+        menu.style.top = '';
+        menu.style.left = '';
+        menu.style.right = '';
+        menu.style.zIndex = '';
+      }
+    }
+
+    // Guardar referencia al padre original en el elemento para closeOtherMenu
+    menuOptions._originalParent = menuOriginalParent;
+
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (menuOptions.classList.contains('show')) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+
+    // Reposicionar al hacer scroll
+    const scrollableParent = menuBtn.closest('.sidebar-content');
+    if (scrollableParent) {
+      scrollableParent.addEventListener('scroll', () => {
+        if (menuOptions.classList.contains('show')) {
+          repositionMenu();
+        }
+      }, { passive: true });
+    }
+
+
+    const btnVerTabla = menuOptions.querySelector('[data-action="ver-tabla"]');
+    if (btnVerTabla) {
+      btnVerTabla.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMenu();
+        openAttributeTable(capaNombre, temasConfig);
+      });
+    }
+
+    const btnZoom = menuOptions.querySelector('[data-action="zoom-capa"]');
+    if (btnZoom) {
+      btnZoom.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMenu();
+        const layer = appState.layers.byName.get(capaNombre);
+        if (layer && layer.getBounds) {
+          appState.map.fitBounds(layer.getBounds(), { padding: [50, 50], maxZoom: 16 });
+        } else {
+          const geojsonData = appState.layers.geojsonData.get(capaNombre);
+          if (geojsonData && window.turf) {
+            try {
+              const bbox = turf.bbox(geojsonData);
+              const bounds = [[bbox[1], bbox[0]], [bbox[3], bbox[2]]];
+              appState.map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+            } catch (err) {
+              log.error("Error calculando bbox con Turf:", err);
+              alert("No se pudo calcular la extensión de la capa.");
+            }
+          } else {
+            alert("Primero debe activar la capa para hacer zoom, o la capa no tiene extensión definida.");
+          }
+        }
+      });
+    }
+
+    const btnDescargar = menuOptions.querySelector('[data-action="descargar-capa"]');
+    if (btnDescargar) {
+      btnDescargar.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMenu();
+        openDownloadModal(capaNombre, temasConfig);
+      });
+    }
+
+    const btnCluster = menuOptions.querySelector('[data-action="toggle-cluster"]');
+    const btnHeatmap = menuOptions.querySelector('[data-action="toggle-heatmap"]');
+
+    if (btnCluster) {
+      btnCluster.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMenu();
+
+        import('./layerUtils.js').then(module => {
+          module.toggleClusterMode(capaNombre, temaKey, temasConfig).then(() => {
+            const newMode = appState.layers.clusterMode.get(capaNombre);
+            const heatmapMode = appState.layers.heatmapMode.get(capaNombre);
+            btnCluster.innerHTML = `<span class="material-symbols-outlined">${newMode ? 'grid_off' : 'grid_view'}</span> ${newMode ? 'Desactivar Cluster' : 'Activar Cluster'}`;
+            if (btnHeatmap) {
+              btnHeatmap.innerHTML = `<span class="material-symbols-outlined">heat</span> ${heatmapMode ? 'Desactivar Mapa de Calor' : 'Activar Mapa de Calor'}`;
+            }
+            module.applySavedOpacity(capaNombre);
+          });
+        });
+      });
+    }
+
+    if (btnHeatmap) {
+      btnHeatmap.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeMenu();
+
+        import('./layerUtils.js').then(module => {
+          module.toggleHeatmapMode(capaNombre, temaKey, temasConfig).then(() => {
+            const newMode = appState.layers.heatmapMode.get(capaNombre);
+            const clusterMode = appState.layers.clusterMode.get(capaNombre);
+            btnHeatmap.innerHTML = `<span class="material-symbols-outlined">heat</span> ${newMode ? 'Desactivar Mapa de Calor' : 'Activar Mapa de Calor'}`;
+            if (btnCluster) {
+              btnCluster.innerHTML = `<span class="material-symbols-outlined">${clusterMode ? 'grid_off' : 'grid_view'}</span> ${clusterMode ? 'Desactivar Cluster' : 'Activar Cluster'}`;
+            }
+            module.applySavedOpacity(capaNombre);
+          });
+        });
+      });
+    }
+  }
+
+  // Si la capa está activa inicialmente, marcar como activa
+  if (isInitialTheme) {
+    listItem.classList.add('layer-active');
+  }
+
+  // Eventos de los sub-checkboxes (filtrado)
+  const subLayerCheckboxes = listItem.querySelectorAll('.sub-layer-checkbox');
+  subLayerCheckboxes.forEach(subCb => {
+    subCb.addEventListener('change', (e) => {
+      const isSubChecked = e.target.checked;
+      const val = e.target.getAttribute('data-valor');
+
+      let hiddenSet = appState.layers.hiddenAttributes.get(capaNombre);
+      if (!hiddenSet) {
+        hiddenSet = new Set();
+        appState.layers.hiddenAttributes.set(capaNombre, hiddenSet);
+      }
+
+      const unescapedVal = val
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&#x2F;/g, "/")
+        .replace(/&#x60;/g, "`")
+        .replace(/&#x3D;/g, "=");
+
+      if (isSubChecked) {
+        hiddenSet.delete(unescapedVal);
+      } else {
+        hiddenSet.add(unescapedVal);
+      }
+
+      if (checkbox.checked && appState.layers.loaded.has(capaNombre)) {
+        import('./layerUtils.js').then(module => {
+          module.updateLayerFilter(capaNombre);
+        });
+      }
+    });
+  });
+
+  return listItem;
+}
+
+/**
+ * Guarda la opacidad de una capa en localStorage
+ * @param {string} capaNombre - Nombre de la capa
+ * @param {number} opacity - Opacidad (0-100)
+ */
+function saveLayerOpacity(capaNombre, opacity) {
+  try {
+    const savedOpacities = JSON.parse(localStorage.getItem('layer-opacities') || '{}');
+    savedOpacities[capaNombre] = opacity;
+    localStorage.setItem('layer-opacities', JSON.stringify(savedOpacities));
+  } catch (e) {
+    log.warn('No se pudo guardar opacidad en localStorage:', e);
+  }
+}
+
+/**
+ * Obtiene la opacidad guardada de una capa
+ * @param {string} capaNombre - Nombre de la capa
+ * @returns {number} Opacidad (0-100), por defecto 100
+ */
+function getLayerOpacity(capaNombre) {
+  try {
+    const savedOpacities = JSON.parse(localStorage.getItem('layer-opacities') || '{}');
+    const raw = savedOpacities[capaNombre];
+    const parsed = Number(raw);
+    return (Number.isFinite(parsed) && parsed >= 0 && parsed <= 100) ? parsed : 100;
+  } catch (e) {
+    return 100;
+  }
+}
+
+export async function activarCapasDeDimension(
+  temaKey,
+  listaCapas,
+  temasConfig
+) {
+  log.debug(
+    `Activando dimensión: ${temaKey}. Cargando ${listaCapas.length} capas.`
+  );
+
+  // Determinar concurrencia según dispositivo
+  const isMobile = window.innerWidth < 769;
+  const CONCURRENCY_LIMIT = isMobile ? 2 : 4;
+
+  const queue = new ConcurrentQueue(CONCURRENCY_LIMIT);
+
+  // Ordenar capas: ligeras primero, pesadas al final
+  // Esto mejora la percepción de velocidad (User Experience)
+  const capasOrdenadas = [...listaCapas].sort((a, b) => {
+    return estimateLayerSize(a) - estimateLayerSize(b);
+  });
+
+  const promises = capasOrdenadas.map((capaNombre) => {
+    return queue.add(async () => {
+      try {
+        if (!appState.layers.loaded.has(capaNombre)) {
+          // Si no está cargada, cargarla
+          await cargarCapaIndividual(capaNombre, temaKey, temasConfig);
+          appState.layers.loaded.add(capaNombre);
+          log.debug(`Capa ${capaNombre} cargada exitosamente`);
+        } else {
+          // Si ya estaba cargada, solo asegurarnos de mostrarla
+          mostrarCapa(capaNombre);
+        }
+
+        // Sincronizar UI inmediatamente después de cargar esta capa
+        syncIndividualCheckboxes(capaNombre, true);
+      } catch (error) {
+        log.warn(`Error cargando ${capaNombre}:`, error);
+      }
+    });
+  });
+
+  // Esperar a que todas termine (aunque la UI se irá actualizando progresivamente)
+  await Promise.all(promises);
+
+  log.log(`Dimensión ${temaKey} activada completamente.`);
+}
+
+export function desactivarCapasDeDimension(temaKey, listaCapas, temasConfig) {
+  log.debug(
+    `Desactivando dimensión: ${temaKey}. Ocultando ${listaCapas.length} capas.`
+  );
+
+  for (const capaNombre of listaCapas) {
+    if (appState.layers.byName.has(capaNombre)) {
+      ocultarCapa(capaNombre);
+    }
+  }
+
+  log.log(
+    `Dimensión ${temaKey} desactivada. Capas ocultadas y checkboxes desmarcados.`
+  );
+}
+
+/**
+ * Sincroniza el estado (checked/unchecked) de los checkboxes individuales de una capa.
+ * @param {string} capaNombre - Nombre de la capa.
+ * @param {boolean} checkedState - true para marcar, false para desmarcar.
+ */
+function syncIndividualCheckboxes(capaNombre, checkedState) {
+  const mainCheckbox = document.getElementById(`capa-${capaNombre}`);
+  if (mainCheckbox) {
+    if (mainCheckbox.checked !== checkedState) {
+      mainCheckbox.checked = checkedState;
+    }
+  }
+
+  const mobileCheckbox = document.getElementById(`capa-mobile-${capaNombre}`);
+  if (mobileCheckbox) {
+    if (mobileCheckbox.checked !== checkedState) {
+      mobileCheckbox.checked = checkedState;
+    }
+  }
+}
+
+/**
+ * Obtiene todas las capas únicas de todos los temas
+ * @param {object} temasConfig - El objeto de configuración de temas
+ * @returns {Array} Array con todas las capas únicas
+ */
+function obtenerTodasLasCapas(temasConfig) {
+  const todasLasCapas = new Set();
+
+  Object.values(temasConfig).forEach((tema) => {
+    if (tema.capas && Array.isArray(tema.capas)) {
+      tema.capas.forEach((capa) => todasLasCapas.add(capa));
+    }
+  });
+
+  return Array.from(todasLasCapas).sort();
+}
+
+export function actualizarCapasSidebar(activeTemaName, temasConfig) {
+  if (!temasConfig) {
+    log.error(
+      "temasConfig es undefined en actualizarCapasSidebar. No se puede construir el sidebar."
+    );
+    return;
+  }
+
+  const sidebarLayers = document.getElementById("sidebar-layers");
+  const sidebarLayersMobile = document.getElementById("sidebar-layers-mobile");
+
+  if (sidebarLayers) {
+    agruparCapasPorDimensionEn(sidebarLayers, temasConfig);
+  } else {
+    log.warn(
+      "Contenedor de capas desktop ('sidebar-layers') no encontrado."
+    );
+  }
+
+  if (sidebarLayersMobile) {
+    agruparCapasPorDimensionEn(sidebarLayersMobile, temasConfig);
+  } else {
+    log.debug(
+      "Contenedor de capas mobile ('sidebar-layers-mobile') no encontrado. Posiblemente no estemos en un breakpoint móvil."
+    );
+  }
+
+  log.debug("Sidebar de capas actualizada con todas las capas disponibles");
+}
+
+/**
+ * Muestra las capas base como radios en el sidebar.
+ * @param {string} contenedorId - ID del contenedor (ej: 'sidebar-bases' o 'sidebar-bases-mobile').
+ * @param {object} capasBaseConfig - Objeto de configuración de capas base.
+ */
+export function actualizarCapasBase(contenedorId, capasBaseConfig) {
+  const contenedor = document.getElementById(contenedorId);
+  if (!contenedor) {
+    log.warn(`Contenedor de capas base '${contenedorId}' no encontrado.`);
+    return;
+  }
+  contenedor.innerHTML = "";
+  const capaKeys = Object.keys(capasBaseConfig);
+  const radioGroupName =
+    contenedorId === "sidebar-base-layers" ? "baseLayer" : "baseLayerMobile";
+
+  capaKeys.forEach((capaKey) => {
+    const config = capasBaseConfig[capaKey];
+    const radioId = `${contenedorId}-radio-${capaKey}`;
+
+    const isChecked = capaKey === "openStreetMap";
+    const div = document.createElement("li");
+    div.classList.add("layer-item-container");
+    if (isChecked) div.classList.add("layer-active");
+
+    div.innerHTML = `
+      <div class="layer-item">
+        <input 
+          class="base-layer-radio sr-only" 
+          type="radio" 
+          name="${radioGroupName}" 
+          id="${radioId}" 
+          value="${capaKey}"
+          ${isChecked ? "checked" : ""}
+        >
+        <label class="layer-vis-btn" for="${radioId}" title="Activar capa base">
+          <span class="material-symbols-outlined vis-icon-on">visibility</span>
+          <span class="material-symbols-outlined vis-icon-off">visibility_off</span>
+        </label>
+        <div class="layer-item-content">
+          <div class="layer-item-header">
+            <label class="layer-item-name" for="${radioId}">${config.nombre}</label>
+          </div>
+          <div class="layer-opacity-control">
+            <input 
+              type="range" 
+              class="layer-opacity-slider base-opacity-slider" 
+              data-capa="${capaKey}"
+              min="0" 
+              max="100" 
+              value="100"
+              step="1"
+            >
+          </div>
+        </div>
+        <div class="layer-options-container">
+          <button class="layer-menu-btn" title="Opciones" type="button">
+            <span class="material-symbols-outlined">more_vert</span>
+          </button>
+          <div class="layer-options-menu">
+            <button class="layer-option-item" type="button" data-action="zoom-capa" data-capa="${capaKey}">
+              <span class="material-symbols-outlined">zoom_in_map</span>
+              Zoom a la Capa
+            </button>
+            <button class="layer-option-item" type="button" data-action="ver-tabla" data-capa="${capaKey}">
+              <span class="material-symbols-outlined">table_chart</span>
+              Ver tabla de Atributos
+            </button>
+            <button class="layer-option-item" type="button" data-action="descargar-capa" data-capa="${capaKey}">
+              <span class="material-symbols-outlined">download</span>
+              Descargar Capa
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const input = div.querySelector('input[type="radio"]');
+    input.addEventListener("change", () => {
+      // Remover clase active de todos los items de base de este grupo
+      contenedor.querySelectorAll('.layer-item-container').forEach(el => el.classList.remove('layer-active'));
+      if (input.checked) {
+        div.classList.add("layer-active");
+        const nuevaCapa = L.tileLayer(config.url, {
+          attribution: config.nombre,
+          maxZoom: 19,
+        });
+
+        if (appState.map && appState.currentBaseLayer) {
+          changeBaseLayer(appState.map, nuevaCapa, appState.currentBaseLayer);
+          appState.currentBaseLayer = nuevaCapa;
+        } else {
+          console.error("Mapa o capa base actual no están definidos en appState.");
+        }
+      }
+    });
+
+    const opacitySlider = div.querySelector('.layer-opacity-slider');
+    opacitySlider.addEventListener('input', (e) => {
+      if (input.checked && appState.currentBaseLayer) {
+        const opacity = e.target.value / 100;
+        appState.currentBaseLayer.setOpacity(opacity);
+      }
+    });
+
+    // Eventos del menú de opciones (capas base)
+    const menuBtn = div.querySelector('.layer-menu-btn');
+    const menuOptions = div.querySelector('.layer-options-menu');
+    if (menuBtn && menuOptions) {
+      menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.layer-options-menu.show').forEach(menu => {
+          if (menu !== menuOptions) menu.classList.remove('show');
+        });
+        document.querySelectorAll('.menu-open-context').forEach(el => {
+          if (el !== div) el.classList.remove('menu-open-context');
+        });
+        menuOptions.classList.toggle('show');
+        div.classList.toggle('menu-open-context', menuOptions.classList.contains('show'));
+      });
+
+      const btnZoom = menuOptions.querySelector('[data-action="zoom-capa"]');
+      if (btnZoom) {
+        btnZoom.addEventListener('click', (e) => {
+          e.stopPropagation();
+          menuOptions.classList.remove('show');
+          div.classList.remove('menu-open-context');
+          alert("Las capas base (mapas de fondo) cubren el mundo entero.");
+        });
+      }
+
+      const btnVerTabla = menuOptions.querySelector('[data-action="ver-tabla"]');
+      if (btnVerTabla) {
+        btnVerTabla.addEventListener('click', (e) => {
+          e.stopPropagation();
+          menuOptions.classList.remove('show');
+          div.classList.remove('menu-open-context');
+          alert("Las capas base (mapas de fondo) no tienen tabla de atributos.");
+        });
+      }
+
+      const btnDescargar = menuOptions.querySelector('[data-action="descargar-capa"]');
+      if (btnDescargar) {
+        btnDescargar.addEventListener('click', (e) => {
+          e.stopPropagation();
+          menuOptions.classList.remove('show');
+          div.classList.remove('menu-open-context');
+          alert("Las capas base (mapas de fondo) no se pueden descargar.");
+        });
+      }
+    }
+
+    contenedor.appendChild(div);
+  });
+}
+
+/**
+ * Sincroniza el estado de los checkboxes con el estado real de las capas en el mapa
+ * @param {string} temaActivo - El tema actualmente activo
+ * @param {object} temasConfig - Configuración de temas
+ */
+export function sincronizarEstadoCapas(temaActivo, temasConfig) {
+
+
+  const todasLasCapas = obtenerTodasLasCapas(temasConfig);
+  const capasDelTemaActivo = temasConfig[temaActivo]?.capas || [];
+
+  todasLasCapas.forEach((capaNombre) => {
+    const perteneceAlTemaActivo = capasDelTemaActivo.includes(capaNombre);
+    const layer = appState.layers.byName.get(capaNombre);
+    const estaVisible = layer && appState.map && appState.map.hasLayer(layer);
+
+    const debeEstarMarcado = perteneceAlTemaActivo || estaVisible;
+
+    const mainCheckbox = document.getElementById(`capa-${capaNombre}`);
+    if (mainCheckbox) {
+      mainCheckbox.checked = debeEstarMarcado;
+    }
+
+    const mobileCheckbox = document.getElementById(`capa-mobile-${capaNombre}`);
+    if (mobileCheckbox) {
+      mobileCheckbox.checked = debeEstarMarcado;
+    }
+
+    const mainLabel = document.querySelector(`label[for="capa-${capaNombre}"]`);
+    const mobileLabel = document.querySelector(
+      `label[for="capa-mobile-${capaNombre}"]`
+    );
+
+    [mainLabel, mobileLabel].forEach((label) => {
+      if (label) {
+        // Todas las capas tienen el mismo estilo, sin importar si son del tema activo
+        label.classList.remove("text-muted");
+        label.classList.remove("fw-bold");
+        label.style.color = "";
+        label.style.fontStyle = "normal";
+        label.style.fontWeight = "";
+      }
+    });
+  });
+
+
+}
+
+/**
+ * Activa una dimensión programáticamente
+ * @param {string} temaKey - Clave del tema (ej: 'energia', 'agua')
+ */
+export function activarDimension(temaKey) {
+  if (appState.ui.activeDimension === temaKey) return;
+
+  // Intentar activar en desktop
+  const switchDesktop = document.getElementById(`dimension-switch-${temaKey}-sidebar-layers`);
+  if (switchDesktop) {
+    if (!switchDesktop.checked) {
+      switchDesktop.click();
+    }
+    return;
+  }
+
+  // Intentar activar en mobile
+  const switchMobile = document.getElementById(`dimension-switch-${temaKey}-sidebar-layers-mobile`);
+  if (switchMobile) {
+    if (!switchMobile.checked) {
+      switchMobile.click();
+    }
+  }
+}

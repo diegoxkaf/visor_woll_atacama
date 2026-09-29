@@ -1,0 +1,12 @@
+{
+  "name": "visor-ohiggins",
+  "version": "2.0.0",
+  "description": "Visor Territorial IFI O'Higgins",
+  "main": "js/app.js",
+  "scripts": {
+    "lint": "eslint js/"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0"
+  }
+}
