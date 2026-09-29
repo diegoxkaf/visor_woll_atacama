@@ -1,6 +1,6 @@
-# Visor Territorial IFI O'Higgins
+# Plataforma Territorial "Water Oriented Living Lab Atacama
 
-> Plataforma WebGIS territorial para la Región de O'Higgins, Chile, potenciada con Inteligencia Artificial.
+> Plataforma WebGIS territorial para la Región de Atacama, Chile, potenciada con Inteligencia Artificial.
 
 ![Version](https://img.shields.io/badge/version-2.0-blue.svg)
 ![License](https://img.shields.io/badge/license-Proprietary-red.svg)
@@ -9,7 +9,7 @@
 
 ## Qué es este proyecto?
 
-La Plataforma Territorial "Water Oriented Living Lab" es una aplicación web interactiva para visualizar y analizar datos geoespaciales estratégicos de la Región de Atacama, Chile. Integra mapas WebGL de alto rendimiento con un asistente de IA context-aware que permite hacer consultas territoriales en lenguaje natural.
+La Plataforma Territorial "Water Oriented Living Lab Atacama" es una aplicación web interactiva para visualizar y analizar datos geoespaciales estratégicos de la Región de Atacama, Chile. Integra mapas WebGL de alto rendimiento con un asistente de IA context-aware que permite hacer consultas territoriales en lenguaje natural.
 
 ### Características principales
 
